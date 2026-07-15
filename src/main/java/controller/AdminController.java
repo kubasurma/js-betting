@@ -5,6 +5,7 @@ import com.jsbetting.model.TipStatus;
 import com.jsbetting.service.AdminService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -19,44 +20,44 @@ public class AdminController {
 
     @PostMapping("/tips")
     public Tip createTip(
-            @RequestParam Long adminId,
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
             @Valid @RequestBody Tip tip
     ) {
-        return adminService.createTip(adminId, tip);
+        return adminService.createTip(authorizationHeader, tip);
     }
 
     @GetMapping("/tips")
-    public List<Tip> getAllTips(@RequestParam Long adminId) {
-        return adminService.getAllTips(adminId);
-    }
-
-    @PatchMapping("/tips/{tipId}/status")
-    public Tip updateTipStatus(
-            @PathVariable Long tipId,
-            @RequestParam Long adminId,
-            @RequestParam TipStatus status
+    public List<Tip> getAllTips(
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
-        return adminService.updateTipStatus(adminId, tipId, status);
+        return adminService.getAllTips(authorizationHeader);
     }
 
     @PutMapping("/tips/{tipId}")
     public Tip updateTip(
             @PathVariable Long tipId,
-            @RequestParam Long adminId,
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
             @Valid @RequestBody Tip updatedTip
     ) {
-        return adminService.updateTip(adminId, tipId, updatedTip);
+        return adminService.updateTip(authorizationHeader, tipId, updatedTip);
     }
 
     @DeleteMapping("/tips/{tipId}")
     public String deleteTip(
             @PathVariable Long tipId,
-            @RequestParam Long adminId
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
-        adminService.deleteTip(adminId, tipId);
+        adminService.deleteTip(authorizationHeader, tipId);
 
         return "Typ usunięty przez admina";
     }
 
-
+    @PatchMapping("/tips/{tipId}/status")
+    public Tip updateTipStatus(
+            @PathVariable Long tipId,
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+            @RequestParam TipStatus status
+    ) {
+        return adminService.updateTipStatus(authorizationHeader, tipId, status);
+    }
 }

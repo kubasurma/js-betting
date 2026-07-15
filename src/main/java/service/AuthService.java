@@ -4,23 +4,24 @@ import com.jsbetting.dto.AuthResponse;
 import com.jsbetting.dto.LoginRequest;
 import com.jsbetting.dto.RegisterRequest;
 import com.jsbetting.model.AppUser;
+import com.jsbetting.model.AppUserRole;
 import com.jsbetting.repository.AppUserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import com.jsbetting.model.AppUserRole;
-
 
 @Service
 public class AuthService {
 
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public AuthService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.appUserRepository = appUserRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -31,16 +32,20 @@ public class AuthService {
         AppUser appUser = new AppUser(request.getEmail(), request.getFirstName());
 
         String hashedPassword = passwordEncoder.encode(request.getPassword());
+
         appUser.setPassword(hashedPassword);
         appUser.setRole(AppUserRole.USER);
 
         AppUser savedUser = appUserRepository.save(appUser);
+
+        String token = jwtService.generateToken(savedUser);
 
         return new AuthResponse(
                 savedUser.getId(),
                 savedUser.getEmail(),
                 savedUser.getFirstName(),
                 savedUser.getRole(),
+                token,
                 "Rejestracja udana"
         );
     }
@@ -59,11 +64,14 @@ public class AuthService {
             );
         }
 
+        String token = jwtService.generateToken(appUser);
+
         return new AuthResponse(
                 appUser.getId(),
                 appUser.getEmail(),
                 appUser.getFirstName(),
                 appUser.getRole(),
+                token,
                 "Logowanie udane"
         );
     }
