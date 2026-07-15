@@ -1,0 +1,91 @@
+package com.jsbetting.dto;
+
+import com.jsbetting.model.TipStatus;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public class MyTipResponse {
+
+    private Long purchaseId;
+    private Long tipId;
+    private String league;
+    private String homeTeam;
+    private String awayTeam;
+    private String pick;
+    private BigDecimal odds;
+    private Integer stake;
+    private LocalDateTime matchDate;
+    private String analysis;
+    private TipStatus status;
+    private BigDecimal pricePaid;
+    private LocalDateTime purchasedAt;
+
+    public MyTipResponse(Long purchaseId, Long tipId, String league, String homeTeam, String awayTeam, String pick, BigDecimal odds, Integer stake, LocalDateTime matchDate, String analysis, TipStatus status, BigDecimal pricePaid, LocalDateTime purchasedAt) {
+        this.purchaseId = purchaseId;
+        this.tipId = tipId;
+        this.league = league;
+        this.homeTeam = homeTeam;
+        this.awayTeam = awayTeam;
+        this.pick = pick;
+        this.odds = odds;
+        this.stake = stake;
+        this.matchDate = matchDate;
+        this.analysis = analysis;
+        this.status = status;
+        this.pricePaid = pricePaid;
+        this.purchasedAt = purchasedAt;
+    }
+
+    public Long getPurchaseId() {
+        return purchaseId;
+    }
+
+    public Long getTipId() {
+        return tipId;
+    }
+
+    public String getLeague() {
+        return league;
+    }
+
+    public String getHomeTeam() {
+        return homeTeam;
+    }
+
+    public String getAwayTeam() {
+        return awayTeam;
+    }
+
+    public String getPick() {
+        return pick;
+    }
+
+    public BigDecimal getOdds() {
+        return odds;
+    }
+
+    public Integer getStake() {
+        return stake;
+    }
+
+    public LocalDateTime getMatchDate() {
+        return matchDate;
+    }
+
+    public String getAnalysis() {
+        return analysis;
+    }
+
+    public TipStatus getStatus() {
+        return status;
+    }
+
+    public BigDecimal getPricePaid() {
+        return pricePaid;
+    }
+
+    public LocalDateTime getPurchasedAt() {
+        return purchasedAt;
+    }
+}
