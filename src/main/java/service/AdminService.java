@@ -57,4 +57,18 @@ public class AdminService {
 
         return tipRepository.findAll();
     }
+
+    public Tip updateTip(Long adminId, Long tipId, Tip updatedTip) {
+        checkAdmin(adminId);
+
+        return tipService.updateTip(tipId, updatedTip);
+    }
+
+    public void deleteTip(Long adminId, Long tipId) {
+        checkAdmin(adminId);
+
+        tipService.deleteTip(tipId);
+    }
+
+
 }

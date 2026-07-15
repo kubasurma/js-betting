@@ -39,4 +39,24 @@ public class AdminController {
         return adminService.updateTipStatus(adminId, tipId, status);
     }
 
+    @PutMapping("/tips/{tipId}")
+    public Tip updateTip(
+            @PathVariable Long tipId,
+            @RequestParam Long adminId,
+            @Valid @RequestBody Tip updatedTip
+    ) {
+        return adminService.updateTip(adminId, tipId, updatedTip);
+    }
+
+    @DeleteMapping("/tips/{tipId}")
+    public String deleteTip(
+            @PathVariable Long tipId,
+            @RequestParam Long adminId
+    ) {
+        adminService.deleteTip(adminId, tipId);
+
+        return "Typ usunięty przez admina";
+    }
+
+
 }
