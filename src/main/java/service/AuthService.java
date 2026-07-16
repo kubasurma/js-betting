@@ -12,18 +12,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-
 @Service
 public class AuthService {
 
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AuthHelperService authHelperService;
 
-    public AuthService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthService(
+            AppUserRepository appUserRepository,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService,
+            AuthHelperService authHelperService
+    ) {
         this.appUserRepository = appUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.authHelperService = authHelperService;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -79,20 +85,7 @@ public class AuthService {
     }
 
     public AuthMeResponse getMe(String authorizationHeader) {
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Brak tokena");
-        }
-
-        String token = authorizationHeader.substring(7);
-
-        if (!jwtService.isTokenValid(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nieprawidłowy token");
-        }
-
-        Long userId = jwtService.extractUserId(token);
-
-        AppUser appUser = appUserRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nie znaleziono użytkownika"));
+        AppUser appUser = authHelperService.getCurrentUser(authorizationHeader);
 
         return new AuthMeResponse(
                 appUser.getId(),
@@ -101,5 +94,4 @@ public class AuthService {
                 appUser.getRole()
         );
     }
-
 }
