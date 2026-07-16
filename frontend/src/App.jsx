@@ -8,6 +8,7 @@ function App() {
 
     const [currentUser, setCurrentUser] = useState(null)
     const [authMessage, setAuthMessage] = useState('')
+    const [purchaseMessage, setPurchaseMessage] = useState('')
 
     const [loginForm, setLoginForm] = useState({
         email: '',
@@ -138,6 +139,39 @@ function App() {
         setAuthMessage('Wylogowano.')
     }
 
+    function handlePurchase(tipId) {
+        setPurchaseMessage('')
+
+        const token = localStorage.getItem('token')
+
+        if (!token || !currentUser) {
+            setPurchaseMessage('Zaloguj się, żeby kupić typ.')
+            return
+        }
+
+        fetch(`http://localhost:8080/purchases?tipId=${tipId}`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Purchase failed')
+                }
+
+                return response.json()
+            })
+            .then((data) => {
+                setPurchaseMessage(`Zakup udany. ID zakupu: ${data.purchaseId}`)
+            })
+            .catch(() => {
+                setPurchaseMessage('Nie udało się kupić typu. Możliwe, że już go kupiłeś.')
+            })
+    }
+
+
+
     return (
         <div className="app">
             <header className="siteHeader">
@@ -242,11 +276,19 @@ function App() {
                                         <p className="price">{offer.price} PLN</p>
                                     </div>
 
-                                    <button className="primaryButton fullWidth">Kup typ</button>
+                                    <button
+  className="primaryButton fullWidth"
+  onClick={() => handlePurchase(offer.id)}
+>
+  Kup typ
+</button>
                                 </article>
                             ))}
                         </div>
                     </div>
+
+                    {purchaseMessage && <p className="infoText">{purchaseMessage}</p>}
+                    
                 </section>
 
                 <section className="section mutedSection" id="account">
