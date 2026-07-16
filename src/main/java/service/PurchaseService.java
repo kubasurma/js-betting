@@ -51,6 +51,15 @@ public class PurchaseService {
         }
 
 
+
+        if (tip.getPremium() == null || !tip.getPremium()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Darmowy typ można odebrać tylko przez free-tip/claim"
+            );
+        }
+
+
         if (purchaseRepository.existsByAppUserIdAndTipId(userId, tipId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Użytkownik już kupił ten typ");
         }
