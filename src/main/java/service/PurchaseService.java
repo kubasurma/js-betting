@@ -43,6 +43,14 @@ public class PurchaseService {
         Tip tip = tipRepository.findById(tipId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nie znaleziono typu"));
 
+        if (tip.getPremium() == null || !tip.getPremium()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Darmowy typ można odebrać tylko przez free-tip/claim"
+            );
+        }
+
+
         if (purchaseRepository.existsByAppUserIdAndTipId(userId, tipId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Użytkownik już kupił ten typ");
         }
