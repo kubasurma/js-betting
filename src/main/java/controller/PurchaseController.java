@@ -8,7 +8,7 @@ import com.jsbetting.service.PurchaseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
+import com.jsbetting.dto.PurchaseResponse;
 import java.util.List;
 
 @RestController
@@ -23,13 +23,21 @@ public class PurchaseController {
     }
 
     @PostMapping("/purchases")
-    public Purchase createPurchase(
+    public PurchaseResponse createPurchase(
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
             @RequestParam Long tipId
     ) {
         Long userId = getUserIdFromToken(authorizationHeader);
 
-        return purchaseService.createPurchase(userId, tipId);
+        Purchase purchase = purchaseService.createPurchase(userId, tipId);
+
+        return new PurchaseResponse(
+                purchase.getId(),
+                purchase.getTip().getId(),
+                purchase.getPricePaid(),
+                purchase.getPurchasedAt(),
+                "Zakup udany"
+        );
     }
 
     @GetMapping("/users/me/purchases")
