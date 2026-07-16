@@ -1,5 +1,6 @@
 package com.jsbetting.service;
 
+import com.jsbetting.dto.AuthMeResponse;
 import com.jsbetting.dto.AuthResponse;
 import com.jsbetting.dto.LoginRequest;
 import com.jsbetting.dto.RegisterRequest;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
 
 @Service
 public class AuthService {
@@ -75,4 +77,29 @@ public class AuthService {
                 "Logowanie udane"
         );
     }
+
+    public AuthMeResponse getMe(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Brak tokena");
+        }
+
+        String token = authorizationHeader.substring(7);
+
+        if (!jwtService.isTokenValid(token)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nieprawidłowy token");
+        }
+
+        Long userId = jwtService.extractUserId(token);
+
+        AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nie znaleziono użytkownika"));
+
+        return new AuthMeResponse(
+                appUser.getId(),
+                appUser.getEmail(),
+                appUser.getFirstName(),
+                appUser.getRole()
+        );
+    }
+
 }

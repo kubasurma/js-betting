@@ -6,6 +6,7 @@ import com.jsbetting.dto.RegisterRequest;
 import com.jsbetting.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import com.jsbetting.dto.AuthMeResponse;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,5 +26,12 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
+    }
+
+    @GetMapping("/me")
+    public AuthMeResponse getMe(
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader
+    ) {
+        return authService.getMe(authorizationHeader);
     }
 }
