@@ -61,7 +61,7 @@ public class PurchaseService {
 
 
         if (purchaseRepository.existsByAppUserIdAndTipId(userId, tipId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Użytkownik już kupił ten typ");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ten typ już został kupiony");
         }
 
         BigDecimal pricePaid = tip.getPrice();
