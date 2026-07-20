@@ -121,7 +121,7 @@ public class PurchaseService {
 
     private MyTipResponse mapToMyTipResponse(Purchase purchase) {
         var tip = purchase.getTip();
-        
+
         return new MyTipResponse(
                 purchase.getId(),
                 tip.getId(),
@@ -130,7 +130,6 @@ public class PurchaseService {
                 tip.getAwayTeam(),
                 tip.getPick(),
                 tip.getOdds(),
-                tip.getStake(),
                 tip.getMatchDate(),
                 tip.getStatus(),
                 purchase.getPricePaid(),

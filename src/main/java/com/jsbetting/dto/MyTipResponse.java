@@ -14,7 +14,6 @@ public class MyTipResponse {
     private String awayTeam;
     private String pick;
     private BigDecimal odds;
-    private Integer stake;
     private LocalDateTime matchDate;
     private TipStatus status;
     private BigDecimal pricePaid;
@@ -28,7 +27,6 @@ public class MyTipResponse {
             String awayTeam,
             String pick,
             BigDecimal odds,
-            Integer stake,
             LocalDateTime matchDate,
             TipStatus status,
             BigDecimal pricePaid,
@@ -41,7 +39,6 @@ public class MyTipResponse {
         this.awayTeam = awayTeam;
         this.pick = pick;
         this.odds = odds;
-        this.stake = stake;
         this.matchDate = matchDate;
         this.status = status;
         this.pricePaid = pricePaid;
@@ -76,9 +73,6 @@ public class MyTipResponse {
         return odds;
     }
 
-    public Integer getStake() {
-        return stake;
-    }
 
     public LocalDateTime getMatchDate() {
         return matchDate;

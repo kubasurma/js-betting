@@ -9,6 +9,10 @@ function App() {
     const [currentUser, setCurrentUser] = useState(null)
     const [authMessage, setAuthMessage] = useState('')
     const [purchaseMessage, setPurchaseMessage] = useState('')
+    const [myTips, setMyTips] = useState([])
+    const [myTipsLoading, setMyTipsLoading] = useState(false)
+    const [myTipsMessage, setMyTipsMessage] = useState('')
+
 
     const [loginForm, setLoginForm] = useState({
         email: '',
@@ -62,6 +66,7 @@ function App() {
             })
             .then((data) => {
                 setCurrentUser(data)
+                loadMyTips()
             })
             .catch(() => {
                 setCurrentUser(null)
@@ -89,6 +94,7 @@ function App() {
             .then((data) => {
                 localStorage.setItem('token', data.token)
                 setCurrentUser(data)
+                loadMyTips()
                 setAuthMessage('Logowanie udane.')
                 setLoginForm({
                     email: '',
@@ -121,6 +127,7 @@ function App() {
             .then((data) => {
                 localStorage.setItem('token', data.token)
                 setCurrentUser(data)
+                loadMyTips()
                 setAuthMessage('Rejestracja udana.')
                 setRegisterForm({
                     email: '',
@@ -136,8 +143,57 @@ function App() {
     function handleLogout() {
         localStorage.removeItem('token')
         setCurrentUser(null)
+        setMyTips([])
+        setMyTipsMessage('')
         setAuthMessage('Wylogowano.')
     }
+
+    function formatDate(value) {
+        if (!value) {
+            return 'Brak daty'
+        }
+
+        return new Date(value).toLocaleString('pl-PL', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+        })
+    }
+
+    function loadMyTips() {
+        const token = localStorage.getItem('token')
+
+        if (!token) {
+            setMyTips([])
+            return
+        }
+
+        setMyTipsLoading(true)
+        setMyTipsMessage('')
+
+        fetch('http://localhost:8080/users/me/my-tips/active', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to load my tips')
+                }
+
+                return response.json()
+            })
+            .then((data) => {
+                setMyTips(data)
+                setMyTipsLoading(false)
+            })
+            .catch(() => {
+                setMyTips([])
+                setMyTipsMessage('Nie udało się pobrać moich typów.')
+                setMyTipsLoading(false)
+            })
+    }
+
+
 
     function handlePurchase(tipId) {
         setPurchaseMessage('')
@@ -164,6 +220,7 @@ function App() {
             })
             .then((data) => {
                 setPurchaseMessage(`Zakup udany. ID zakupu: ${data.purchaseId}`)
+                loadMyTips()
             })
             .catch(() => {
                 setPurchaseMessage('Nie udało się kupić typu. Możliwe, że już go kupiłeś.')
@@ -182,6 +239,7 @@ function App() {
 
                     <nav className="navLinks">
                         <a href="#offers">Oferty</a>
+                        <a href="#my-tips">Moje typy</a>
                         <a href="#account">Konto</a>
                         <a href="#how-it-works">Jak to działa</a>
                         <a href="#why-us">Dlaczego my</a>
@@ -289,6 +347,84 @@ function App() {
 
                     {purchaseMessage && <p className="infoText">{purchaseMessage}</p>}
                     
+                </section>
+
+                <section className="section mutedSection" id="my-tips">
+                    <div className="container">
+                        <div className="sectionHeader">
+                            <p className="eyebrow">Strefa użytkownika</p>
+                            <h2>Moje typy</h2>
+                            <p>
+                                Tutaj zobaczysz typy kupione na swoim koncie. Analizy nie są wyświetlane.
+                            </p>
+                        </div>
+
+                        {!currentUser && (
+                            <p className="infoText">Zaloguj się, żeby zobaczyć swoje typy.</p>
+                        )}
+
+                        {currentUser && (
+                            <>
+                                <button className="secondaryButton refreshButton" onClick={loadMyTips}>
+                                    Odśwież moje typy
+                                </button>
+
+                                {myTipsLoading && <p className="infoText">Ładowanie moich typów...</p>}
+
+                                {myTipsMessage && <p className="errorText">{myTipsMessage}</p>}
+
+                                {!myTipsLoading && myTips.length === 0 && (
+                                    <p className="infoText">Nie masz jeszcze aktywnych typów.</p>
+                                )}
+
+                                <div className="myTipsGrid">
+                                    {myTips.map((tip) => (
+                                        <article className="myTipCard" key={tip.purchaseId}>
+                                            <div className="offerTop">
+                                                <p className="cardLabel">Zakup #{tip.purchaseId}</p>
+                                                <span className="statusBadge">{tip.status}</span>
+                                            </div>
+
+                                            <div>
+                                                <p className="cardLabel">Liga</p>
+                                                <h3>{tip.league}</h3>
+                                            </div>
+
+                                            <div>
+                                                <p className="cardLabel">Mecz</p>
+                                                <p className="matchName">
+                                                    {tip.homeTeam} vs {tip.awayTeam}
+                                                </p>
+                                            </div>
+
+                                            <div className="tipDetailsGrid">
+                                                <div>
+                                                    <p className="cardLabel">Pick</p>
+                                                    <p className="tipValue">{tip.pick}</p>
+                                                </div>
+
+                                                <div>
+                                                    <p className="cardLabel">Kurs</p>
+                                                    <p className="tipValue">{tip.odds}</p>
+                                                </div>
+
+
+                                                <div>
+                                                    <p className="cardLabel">Cena</p>
+                                                    <p className="tipValue">{tip.pricePaid} PLN</p>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <p className="cardLabel">Data meczu</p>
+                                                <p className="tipValue">{formatDate(tip.matchDate)}</p>
+                                            </div>
+                                        </article>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </section>
 
                 <section className="section mutedSection" id="account">
@@ -471,3 +607,4 @@ function App() {
 }
 
 export default App
+
