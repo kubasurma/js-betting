@@ -13,6 +13,9 @@ function App() {
     const [myTipsLoading, setMyTipsLoading] = useState(false)
     const [myTipsMessage, setMyTipsMessage] = useState('')
 
+    const [freeTipStatus, setFreeTipStatus] = useState(null)
+    const [freeTipLoading, setFreeTipLoading] = useState(false)
+    const [freeTipMessage, setFreeTipMessage] = useState('')
 
     const [loginForm, setLoginForm] = useState({
         email: '',
@@ -67,6 +70,7 @@ function App() {
             .then((data) => {
                 setCurrentUser(data)
                 loadMyTips()
+                loadFreeTipStatus()
             })
             .catch(() => {
                 setCurrentUser(null)
@@ -95,6 +99,7 @@ function App() {
                 localStorage.setItem('token', data.token)
                 setCurrentUser(data)
                 loadMyTips()
+                loadFreeTipStatus()
                 setAuthMessage('Logowanie udane.')
                 setLoginForm({
                     email: '',
@@ -128,6 +133,7 @@ function App() {
                 localStorage.setItem('token', data.token)
                 setCurrentUser(data)
                 loadMyTips()
+                loadFreeTipStatus()
                 setAuthMessage('Rejestracja udana.')
                 setRegisterForm({
                     email: '',
@@ -145,6 +151,8 @@ function App() {
         setCurrentUser(null)
         setMyTips([])
         setMyTipsMessage('')
+        setFreeTipStatus(null)
+        setFreeTipMessage('')
         setAuthMessage('Wylogowano.')
     }
 
@@ -193,6 +201,79 @@ function App() {
             })
     }
 
+    function loadFreeTipStatus() {
+        const token = localStorage.getItem('token')
+
+        if (!token) {
+            setFreeTipStatus(null)
+            return
+        }
+
+        setFreeTipLoading(true)
+        setFreeTipMessage('')
+
+        fetch('http://localhost:8080/users/me/free-tip/status', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to load free tip status')
+                }
+
+                return response.json()
+            })
+            .then((data) => {
+                setFreeTipStatus(data)
+                setFreeTipLoading(false)
+            })
+            .catch(() => {
+                setFreeTipStatus(null)
+                setFreeTipMessage('Nie udało się pobrać statusu darmowego typu.')
+                setFreeTipLoading(false)
+            })
+    }
+
+    function claimFreeTip() {
+        const token = localStorage.getItem('token')
+
+        if (!token || !currentUser) {
+            setFreeTipMessage('Zaloguj się, żeby odebrać darmowy typ.')
+            return
+        }
+
+        setFreeTipLoading(true)
+        setFreeTipMessage('')
+
+        fetch('http://localhost:8080/users/me/free-tip/claim', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to claim free tip')
+                }
+
+                return response.json()
+            })
+            .then(() => {
+                setFreeTipMessage('Darmowy typ odebrany.')
+                setFreeTipLoading(false)
+                loadFreeTipStatus()
+                loadMyTips()
+            })
+            .catch(() => {
+                setFreeTipMessage('Nie udało się odebrać darmowego typu.')
+                setFreeTipLoading(false)
+                loadFreeTipStatus()
+            })
+    }
+
+
+
 
 
     function handlePurchase(tipId) {
@@ -239,6 +320,7 @@ function App() {
 
                     <nav className="navLinks">
                         <a href="#offers">Oferty</a>
+                        <a href="#free-tip">Free Tip</a>
                         <a href="#my-tips">Moje typy</a>
                         <a href="#account">Konto</a>
                         <a href="#how-it-works">Jak to działa</a>
@@ -348,6 +430,64 @@ function App() {
                     {purchaseMessage && <p className="infoText">{purchaseMessage}</p>}
                     
                 </section>
+
+                <section className="section" id="free-tip">
+                    <div className="container">
+                        <div className="freeTipBox">
+                            <div>
+                                <p className="eyebrow">Free Tip</p>
+                                <h2>Darmowy typ co 5 dni</h2>
+                                <p>
+                                    Zalogowany użytkownik może odebrać jeden darmowy typ raz na 5 dni.
+                                    Darmowy typ trafia potem do sekcji „Moje typy”.
+                                </p>
+                            </div>
+
+                            <div className="freeTipPanel">
+                                {!currentUser && (
+                                    <p className="infoText">Zaloguj się, żeby odebrać darmowy typ.</p>
+                                )}
+
+                                {currentUser && freeTipLoading && (
+                                    <p className="infoText">Sprawdzanie statusu...</p>
+                                )}
+
+                                {currentUser && freeTipStatus && (
+                                    <>
+                                        <div className="panelCard">
+                                            <span>Status</span>
+                                            <strong>
+                                                {freeTipStatus.canClaim ? 'Dostępny' : 'Niedostępny'}
+                                            </strong>
+                                        </div>
+
+                                        {!freeTipStatus.canClaim && (
+                                            <div className="panelCard">
+                                                <span>Następny darmowy typ</span>
+                                                <strong>{formatDate(freeTipStatus.nextAvailableAt)}</strong>
+                                            </div>
+                                        )}
+
+                                        {freeTipStatus.message && (
+                                            <p className="infoText">{freeTipStatus.message}</p>
+                                        )}
+
+                                        <button
+                                            className="primaryButton fullWidth"
+                                            onClick={claimFreeTip}
+                                            disabled={!freeTipStatus.canClaim || freeTipLoading}
+                                        >
+                                            Odbierz darmowy typ
+                                        </button>
+                                    </>
+                                )}
+
+                                {freeTipMessage && <p className="infoText">{freeTipMessage}</p>}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
 
                 <section className="section mutedSection" id="my-tips">
                     <div className="container">
