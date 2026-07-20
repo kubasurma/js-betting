@@ -120,18 +120,19 @@ public class PurchaseService {
     }
 
     private MyTipResponse mapToMyTipResponse(Purchase purchase) {
+        var tip = purchase.getTip();
+        
         return new MyTipResponse(
                 purchase.getId(),
-                purchase.getTip().getId(),
-                purchase.getTip().getLeague(),
-                purchase.getTip().getHomeTeam(),
-                purchase.getTip().getAwayTeam(),
-                purchase.getTip().getPick(),
-                purchase.getTip().getOdds(),
-                purchase.getTip().getStake(),
-                purchase.getTip().getMatchDate(),
-                purchase.getTip().getAnalysis(),
-                purchase.getTip().getStatus(),
+                tip.getId(),
+                tip.getLeague(),
+                tip.getHomeTeam(),
+                tip.getAwayTeam(),
+                tip.getPick(),
+                tip.getOdds(),
+                tip.getStake(),
+                tip.getMatchDate(),
+                tip.getStatus(),
                 purchase.getPricePaid(),
                 purchase.getPurchasedAt()
         );

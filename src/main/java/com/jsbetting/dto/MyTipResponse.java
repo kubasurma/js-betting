@@ -16,12 +16,24 @@ public class MyTipResponse {
     private BigDecimal odds;
     private Integer stake;
     private LocalDateTime matchDate;
-    private String analysis;
     private TipStatus status;
     private BigDecimal pricePaid;
     private LocalDateTime purchasedAt;
 
-    public MyTipResponse(Long purchaseId, Long tipId, String league, String homeTeam, String awayTeam, String pick, BigDecimal odds, Integer stake, LocalDateTime matchDate, String analysis, TipStatus status, BigDecimal pricePaid, LocalDateTime purchasedAt) {
+    public MyTipResponse(
+            Long purchaseId,
+            Long tipId,
+            String league,
+            String homeTeam,
+            String awayTeam,
+            String pick,
+            BigDecimal odds,
+            Integer stake,
+            LocalDateTime matchDate,
+            TipStatus status,
+            BigDecimal pricePaid,
+            LocalDateTime purchasedAt
+    ) {
         this.purchaseId = purchaseId;
         this.tipId = tipId;
         this.league = league;
@@ -31,7 +43,6 @@ public class MyTipResponse {
         this.odds = odds;
         this.stake = stake;
         this.matchDate = matchDate;
-        this.analysis = analysis;
         this.status = status;
         this.pricePaid = pricePaid;
         this.purchasedAt = purchasedAt;
@@ -71,10 +82,6 @@ public class MyTipResponse {
 
     public LocalDateTime getMatchDate() {
         return matchDate;
-    }
-
-    public String getAnalysis() {
-        return analysis;
     }
 
     public TipStatus getStatus() {
