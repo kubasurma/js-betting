@@ -167,6 +167,24 @@ function App() {
         })
     }
 
+    async function readErrorMessage(response, fallbackMessage) {
+        const contentType = response.headers.get('content-type') || ''
+
+        if (contentType.includes('application/json')) {
+            try {
+                const body = await response.json()
+
+                return body.detail || body.message || fallbackMessage
+            } catch {
+                return fallbackMessage
+            }
+        }
+
+        const text = await response.text()
+
+        return text || fallbackMessage
+    }
+
     function loadMyTips() {
         const token = localStorage.getItem('token')
 
@@ -272,11 +290,7 @@ function App() {
             })
     }
 
-
-
-
-
-    function handlePurchase(tipId) {
+    async function handlePurchase(tipId) {
         setPurchaseMessage('')
 
         const token = localStorage.getItem('token')
@@ -286,26 +300,30 @@ function App() {
             return
         }
 
-        fetch(`http://localhost:8080/purchases?tipId=${tipId}`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Purchase failed')
-                }
+        try {
+            const response = await fetch(`http://localhost:8080/purchases?tipId=${tipId}`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
 
-                return response.json()
-            })
-            .then((data) => {
-                setPurchaseMessage(`Zakup udany. ID zakupu: ${data.purchaseId}`)
-                loadMyTips()
-            })
-            .catch(() => {
-                setPurchaseMessage('Nie udało się kupić typu. Możliwe, że już go kupiłeś.')
-            })
+            if (!response.ok) {
+                const message = await readErrorMessage(
+                    response,
+                    'Nie udało się kupić typu. Możliwe, że ten typ został już kupiony.'
+                )
+
+                throw new Error(message)
+            }
+
+            const data = await response.json()
+
+            setPurchaseMessage(`Zakup udany. ID zakupu: ${data.purchaseId}`)
+            loadMyTips()
+        } catch (error) {
+            setPurchaseMessage(error.message)
+        }
     }
 
 
