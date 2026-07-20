@@ -17,6 +17,8 @@ function App() {
     const [freeTipLoading, setFreeTipLoading] = useState(false)
     const [freeTipMessage, setFreeTipMessage] = useState('')
 
+    const isAdmin = currentUser?.role === 'ADMIN'
+
     const [loginForm, setLoginForm] = useState({
         email: '',
         password: '',
@@ -341,6 +343,7 @@ function App() {
                         <a href="#free-tip">Free Tip</a>
                         <a href="#my-tips">Moje typy</a>
                         <a href="#account">Konto</a>
+                        {isAdmin && <a href="#admin">Admin</a>}
                         <a href="#how-it-works">Jak to działa</a>
                         <a href="#why-us">Dlaczego my</a>
                     </nav>
@@ -705,6 +708,29 @@ function App() {
                         {authMessage && <p className="infoText">{authMessage}</p>}
                     </div>
                 </section>
+
+                {isAdmin && (
+                    <section className="section" id="admin">
+                        <div className="container">
+                            <div className="adminBox">
+                                <div>
+                                    <p className="eyebrow">Admin</p>
+                                    <h2>Panel administratora</h2>
+                                    <p>
+                                        Ta sekcja jest widoczna tylko dla użytkownika z rolą ADMIN.
+                                        W następnym kroku dodamy tutaj formularz dodawania typów.
+                                    </p>
+                                </div>
+
+                                <div className="adminStatusCard">
+                                    <p className="cardLabel">Zalogowany admin</p>
+                                    <h3>{currentUser.email}</h3>
+                                    <p>Rola: {currentUser.role}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                )}
 
                 <section className="section mutedSection" id="how-it-works">
                     <div className="container">
