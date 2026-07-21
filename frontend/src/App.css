@@ -653,3 +653,19 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+.adminStatusActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.adminStatusActions .secondaryButton {
+  flex: 1;
+  min-width: 90px;
+}
+
+.secondaryButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}

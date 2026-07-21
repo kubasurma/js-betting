@@ -436,7 +436,41 @@ function App() {
         }
     }
 
+    async function handleUpdateTipStatus(tipId, status) {
+        const token = localStorage.getItem('token')
 
+        if (!token || !isAdmin) {
+            setAdminTipsMessage('Tylko admin może zmieniać status typu.')
+            return
+        }
+
+        try {
+            const response = await fetch(
+                `http://localhost:8080/admin/tips/${tipId}/status?status=${status}`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+
+            if (!response.ok) {
+                const message = await readErrorMessage(
+                    response,
+                    'Nie udało się zmienić statusu typu.'
+                )
+
+                throw new Error(message)
+            }
+
+            setAdminTipsMessage(`Status typu #${tipId} został zmieniony na ${status}.`)
+            loadAdminTips()
+            loadOffers()
+        } catch (error) {
+            setAdminTipsMessage(error.message)
+        }
+    }
 
 
     async function handlePurchase(tipId) {
@@ -1048,6 +1082,35 @@ function App() {
                                                     <p className="tipValue">{formatDate(tip.matchDate)}</p>
                                                 </div>
                                             </div>
+                                            <div className="adminStatusActions">
+                                                <button
+                                                    className="secondaryButton"
+                                                    type="button"
+                                                    onClick={() => handleUpdateTipStatus(tip.id, 'PENDING')}
+                                                    disabled={tip.status === 'PENDING'}
+                                                >
+                                                    Pending
+                                                </button>
+
+                                                <button
+                                                    className="secondaryButton"
+                                                    type="button"
+                                                    onClick={() => handleUpdateTipStatus(tip.id, 'WON')}
+                                                    disabled={tip.status === 'WON'}
+                                                >
+                                                    Won
+                                                </button>
+
+                                                <button
+                                                    className="secondaryButton"
+                                                    type="button"
+                                                    onClick={() => handleUpdateTipStatus(tip.id, 'LOST')}
+                                                    disabled={tip.status === 'LOST'}
+                                                >
+                                                    Lost
+                                                </button>
+                                            </div>
+
                                         </article>
                                     ))}
                                 </div>
