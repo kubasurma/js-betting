@@ -21,6 +21,18 @@ function App() {
     const [adminTipsLoading, setAdminTipsLoading] = useState(false)
     const [adminTipsMessage, setAdminTipsMessage] = useState('')
 
+    const [adminTipForm, setAdminTipForm] = useState({
+        league: '',
+        homeTeam: '',
+        awayTeam: '',
+        pick: '',
+        odds: '',
+        matchDate: '',
+        price: '',
+    })
+
+    const [adminCreateMessage, setAdminCreateMessage] = useState('')
+
     const isAdmin = currentUser?.role === 'ADMIN'
 
     const [loginForm, setLoginForm] = useState({
@@ -35,6 +47,13 @@ function App() {
     })
 
     useEffect(() => {
+        loadOffers()
+    }, [])
+
+    function loadOffers() {
+        setLoading(true)
+        setError('')
+
         fetch('http://localhost:8080/offers/premium')
             .then((response) => {
                 if (!response.ok) {
@@ -51,7 +70,7 @@ function App() {
                 setError('Nie udało się pobrać ofert premium.')
                 setLoading(false)
             })
-    }, [])
+    }
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -310,7 +329,7 @@ function App() {
     async function loadAdminTips() {
         const token = localStorage.getItem('token')
 
-        if (!token || !isAdmin) {
+        if (!token) {
             setAdminTips([])
             return
         }
@@ -344,6 +363,79 @@ function App() {
             setAdminTipsLoading(false)
         }
     }
+
+    function handleAdminTipFormChange(event) {
+        const { name, value } = event.target
+
+        setAdminTipForm({
+            ...adminTipForm,
+            [name]: value,
+        })
+    }
+
+    async function handleCreatePremiumTip(event) {
+        event.preventDefault()
+        setAdminCreateMessage('')
+
+        const token = localStorage.getItem('token')
+
+        if (!token || !isAdmin) {
+            setAdminCreateMessage('Tylko admin może dodać typ.')
+            return
+        }
+
+        const payload = {
+            league: adminTipForm.league,
+            homeTeam: adminTipForm.homeTeam,
+            awayTeam: adminTipForm.awayTeam,
+            pick: adminTipForm.pick,
+            odds: Number(adminTipForm.odds),
+            stake: 1,
+            matchDate: adminTipForm.matchDate,
+            analysis: 'Brak analizy',
+            status: 'PENDING',
+            premium: true,
+            price: Number(adminTipForm.price),
+        }
+
+        try {
+            const response = await fetch('http://localhost:8080/admin/tips', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(payload),
+            })
+
+            if (!response.ok) {
+                const message = await readErrorMessage(
+                    response,
+                    'Nie udało się dodać typu.'
+                )
+
+                throw new Error(message)
+            }
+
+            setAdminCreateMessage('Typ premium został dodany.')
+
+            setAdminTipForm({
+                league: '',
+                homeTeam: '',
+                awayTeam: '',
+                pick: '',
+                odds: '',
+                matchDate: '',
+                price: '',
+            })
+
+            loadAdminTips()
+            loadOffers()
+        } catch (error) {
+            setAdminCreateMessage(error.message)
+        }
+    }
+
 
 
 
@@ -788,6 +880,108 @@ function App() {
                                 </div>
                             </div>
 
+                            <div className="adminCreatePanel">
+                                <div className="sectionHeader">
+                                    <p className="eyebrow">Create tip</p>
+                                    <h2>Dodaj typ premium</h2>
+                                    <p>
+                                        Ten formularz tworzy pełny typ w backendzie. Publicznie użytkownik
+                                        nadal zobaczy tylko zakres kursu i cenę.
+                                    </p>
+                                </div>
+
+                                <form className="adminForm" onSubmit={handleCreatePremiumTip}>
+                                    <label>
+                                        Liga
+                                        <input
+                                            name="league"
+                                            type="text"
+                                            value={adminTipForm.league}
+                                            onChange={handleAdminTipFormChange}
+                                            required
+                                        />
+                                    </label>
+
+                                    <label>
+                                        Gospodarz
+                                        <input
+                                            name="homeTeam"
+                                            type="text"
+                                            value={adminTipForm.homeTeam}
+                                            onChange={handleAdminTipFormChange}
+                                            required
+                                        />
+                                    </label>
+
+                                    <label>
+                                        Gość
+                                        <input
+                                            name="awayTeam"
+                                            type="text"
+                                            value={adminTipForm.awayTeam}
+                                            onChange={handleAdminTipFormChange}
+                                            required
+                                        />
+                                    </label>
+
+                                    <label>
+                                        Pick
+                                        <input
+                                            name="pick"
+                                            type="text"
+                                            value={adminTipForm.pick}
+                                            onChange={handleAdminTipFormChange}
+                                            required
+                                        />
+                                    </label>
+
+                                    <label>
+                                        Kurs
+                                        <input
+                                            name="odds"
+                                            type="number"
+                                            step="0.01"
+                                            min="1"
+                                            value={adminTipForm.odds}
+                                            onChange={handleAdminTipFormChange}
+                                            required
+                                        />
+                                    </label>
+
+                                    <label>
+                                        Cena PLN
+                                        <input
+                                            name="price"
+                                            type="number"
+                                            step="0.01"
+                                            min="0"
+                                            value={adminTipForm.price}
+                                            onChange={handleAdminTipFormChange}
+                                            required
+                                        />
+                                    </label>
+
+                                    <label className="wideField">
+                                        Data meczu
+                                        <input
+                                            name="matchDate"
+                                            type="datetime-local"
+                                            value={adminTipForm.matchDate}
+                                            onChange={handleAdminTipFormChange}
+                                            required
+                                        />
+                                    </label>
+
+                                    <button className="primaryButton fullWidth wideField" type="submit">
+                                        Dodaj typ premium
+                                    </button>
+                                </form>
+
+                                {adminCreateMessage && (
+                                    <p className="infoText">{adminCreateMessage}</p>
+                                )}
+                            </div>
+
                             <div className="adminTipsPanel">
                                 <div className="sectionHeader">
                                     <p className="eyebrow">Admin data</p>
@@ -861,6 +1055,9 @@ function App() {
                         </div>
                     </section>
                 )}
+
+
+
 
                 <section className="section mutedSection" id="how-it-works">
                     <div className="container">
