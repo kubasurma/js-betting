@@ -626,7 +626,7 @@ function App() {
                             <h1>Typy premium bez odkrywania kart przed zakupem.</h1>
 
                             <p className="heroText">
-                                Widzisz zakres kursu i cenę. Pełny typ, analiza i dokładne spotkanie
+                                Widzisz zakres kursu i cenę. Pełny typ i dokładne spotkanie
                                 odblokowują się dopiero po zakupie.
                             </p>
 
@@ -663,7 +663,7 @@ function App() {
                             <p className="eyebrow">Dostępne teraz</p>
                             <h2>Oferty premium</h2>
                             <p>
-                                Przed zakupem nie pokazujemy meczu, picka ani analizy.
+                                Przed zakupem nie pokazujemy meczu, picka ani dokładnego kursu.
                                 Dzięki temu treść premium pozostaje zabezpieczona.
                             </p>
                         </div>
@@ -773,7 +773,8 @@ function App() {
                             <p className="eyebrow">Strefa użytkownika</p>
                             <h2>Moje typy</h2>
                             <p>
-                                Tutaj zobaczysz typy kupione na swoim koncie. Analizy nie są wyświetlane.
+                                Tutaj zobaczysz typy kupione na swoim koncie razem z meczem, pickiem,
+                                kursem i statusem.
                             </p>
                         </div>
 
@@ -1230,9 +1231,9 @@ function App() {
 
                         <div className="stepsGrid">
                             <div className="stepCard">
-                                <span>01</span>
-                                <h3>Wybierasz ofertę</h3>
-                                <p>Przed zakupem widzisz tylko zakres kursu i cenę.</p>
+                                <span>03</span>
+                                <h3>Odbierasz typ</h3>
+                                <p>W sekcji „Moje typy” widzisz mecz, pick, kurs i status typu.</p>
                             </div>
 
                             <div className="stepCard">
@@ -1243,8 +1244,8 @@ function App() {
 
                             <div className="stepCard">
                                 <span>03</span>
-                                <h3>Odbierasz analizę</h3>
-                                <p>W sekcji „Moje typy” widzisz pełne szczegóły i status.</p>
+                                <h3>Odbierasz typ</h3>
+                                <p>W sekcji „Moje typy” widzisz mecz, pick, kurs i status typu.</p>
                             </div>
                         </div>
                     </div>
