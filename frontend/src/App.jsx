@@ -472,6 +472,41 @@ function App() {
         }
     }
 
+    async function handleDeleteTip(tipId) {
+        setAdminTipsMessage(`Próbuję usunąć typ #${tipId}...`)
+
+        const token = localStorage.getItem('token')
+
+        if (!token || !isAdmin) {
+            setAdminTipsMessage('Tylko admin może usuwać typy.')
+            return
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/admin/tips/${tipId}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            if (!response.ok) {
+                const message = await readErrorMessage(
+                    response,
+                    'Nie udało się usunąć typu.'
+                )
+
+                throw new Error(message)
+            }
+
+            setAdminTipsMessage(`Typ #${tipId} został usunięty.`)
+
+            loadAdminTips()
+            loadOffers()
+        } catch (error) {
+            setAdminTipsMessage(error.message)
+        }
+    }
 
     async function handlePurchase(tipId) {
         setPurchaseMessage('')
@@ -1108,6 +1143,14 @@ function App() {
                                                     disabled={tip.status === 'LOST'}
                                                 >
                                                     Lost
+                                                </button>
+
+                                                <button
+                                                    className="secondaryButton deleteButton"
+                                                    type="button"
+                                                    onClick={() => handleDeleteTip(tip.id)}
+                                                >
+                                                    Usuń
                                                 </button>
                                             </div>
 

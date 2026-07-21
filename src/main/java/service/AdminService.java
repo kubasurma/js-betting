@@ -8,7 +8,7 @@ import com.jsbetting.repository.TipRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
+import com.jsbetting.repository.PurchaseRepository;
 import java.util.List;
 
 @Service
@@ -17,15 +17,19 @@ public class AdminService {
     private final TipRepository tipRepository;
     private final TipService tipService;
     private final AuthHelperService authHelperService;
+    private final PurchaseRepository purchaseRepository;
+
 
     public AdminService(
             TipRepository tipRepository,
             TipService tipService,
-            AuthHelperService authHelperService
+            AuthHelperService authHelperService,
+            PurchaseRepository purchaseRepository
     ) {
         this.tipRepository = tipRepository;
         this.tipService = tipService;
         this.authHelperService = authHelperService;
+        this.purchaseRepository = purchaseRepository;
     }
 
     public Tip createTip(String authorizationHeader, Tip tip) {
@@ -46,10 +50,21 @@ public class AdminService {
         return tipService.updateTip(tipId, updatedTip);
     }
 
-    public void deleteTip(String authorizationHeader, Long tipId) {
+    public void deleteTip(Long tipId, String authorizationHeader) {
         checkAdmin(authorizationHeader);
 
-        tipService.deleteTip(tipId);
+        if (!tipRepository.existsById(tipId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Typ nie istnieje");
+        }
+
+        if (purchaseRepository.existsByTipId(tipId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Nie można usunąć typu, który został już kupiony"
+            );
+        }
+
+        tipRepository.deleteById(tipId);
     }
 
     public Tip updateTipStatus(String authorizationHeader, Long tipId, TipStatus status) {

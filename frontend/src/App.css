@@ -669,3 +669,26 @@ h1 {
   cursor: not-allowed;
   transform: none;
 }
+
+
+.dangerButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 90px;
+  padding: 14px 22px;
+  background: rgba(239, 68, 68, 0.12);
+  color: #fecaca;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.dangerButton:hover {
+  color: #ffffff;
+  border-color: #f87171;
+  transform: translateY(-1px);
+}

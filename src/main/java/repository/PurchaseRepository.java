@@ -17,4 +17,6 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     Optional<Purchase> findFirstByAppUserIdAndTip_PremiumOrderByPurchasedAtDesc(Long appUserId, Boolean premium);
 
     boolean existsByAppUserIdAndTipId(Long appUserId, Long tipId);
+
+    boolean existsByTipId(Long tipId);
 }

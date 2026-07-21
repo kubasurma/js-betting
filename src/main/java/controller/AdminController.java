@@ -47,7 +47,7 @@ public class AdminController {
             @PathVariable Long tipId,
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
-        adminService.deleteTip(authorizationHeader, tipId);
+        adminService.deleteTip(tipId, authorizationHeader);
 
         return "Typ usunięty przez admina";
     }
