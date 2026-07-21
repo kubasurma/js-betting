@@ -17,6 +17,10 @@ function App() {
     const [freeTipLoading, setFreeTipLoading] = useState(false)
     const [freeTipMessage, setFreeTipMessage] = useState('')
 
+    const [adminTips, setAdminTips] = useState([])
+    const [adminTipsLoading, setAdminTipsLoading] = useState(false)
+    const [adminTipsMessage, setAdminTipsMessage] = useState('')
+
     const isAdmin = currentUser?.role === 'ADMIN'
 
     const [loginForm, setLoginForm] = useState({
@@ -73,6 +77,10 @@ function App() {
                 setCurrentUser(data)
                 loadMyTips()
                 loadFreeTipStatus()
+
+                if (data.role === 'ADMIN') {
+                    setTimeout(loadAdminTips, 0)
+                }
             })
             .catch(() => {
                 setCurrentUser(null)
@@ -102,6 +110,11 @@ function App() {
                 setCurrentUser(data)
                 loadMyTips()
                 loadFreeTipStatus()
+
+                if (data.role === 'ADMIN') {
+                    setTimeout(loadAdminTips, 0)
+                }
+
                 setAuthMessage('Logowanie udane.')
                 setLoginForm({
                     email: '',
@@ -155,6 +168,8 @@ function App() {
         setMyTipsMessage('')
         setFreeTipStatus(null)
         setFreeTipMessage('')
+        setAdminTips([])
+        setAdminTipsMessage('')
         setAuthMessage('Wylogowano.')
     }
 
@@ -291,6 +306,46 @@ function App() {
                 loadFreeTipStatus()
             })
     }
+
+    async function loadAdminTips() {
+        const token = localStorage.getItem('token')
+
+        if (!token || !isAdmin) {
+            setAdminTips([])
+            return
+        }
+
+        setAdminTipsLoading(true)
+        setAdminTipsMessage('')
+
+        try {
+            const response = await fetch('http://localhost:8080/admin/tips', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            if (!response.ok) {
+                const message = await readErrorMessage(
+                    response,
+                    'Nie udało się pobrać typów admina.'
+                )
+
+                throw new Error(message)
+            }
+
+            const data = await response.json()
+
+            setAdminTips(data)
+        } catch (error) {
+            setAdminTips([])
+            setAdminTipsMessage(error.message)
+        } finally {
+            setAdminTipsLoading(false)
+        }
+    }
+
+
 
     async function handlePurchase(tipId) {
         setPurchaseMessage('')
@@ -718,7 +773,7 @@ function App() {
                                     <h2>Panel administratora</h2>
                                     <p>
                                         Ta sekcja jest widoczna tylko dla użytkownika z rolą ADMIN.
-                                        W następnym kroku dodamy tutaj formularz dodawania typów.
+                                        Tutaj będziemy zarządzać typami.
                                     </p>
                                 </div>
 
@@ -726,6 +781,81 @@ function App() {
                                     <p className="cardLabel">Zalogowany admin</p>
                                     <h3>{currentUser.email}</h3>
                                     <p>Rola: {currentUser.role}</p>
+
+                                    <button className="secondaryButton" onClick={loadAdminTips}>
+                                        Odśwież typy
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="adminTipsPanel">
+                                <div className="sectionHeader">
+                                    <p className="eyebrow">Admin data</p>
+                                    <h2>Wszystkie typy</h2>
+                                    <p>
+                                        Lista pochodzi z zabezpieczonego endpointu admina.
+                                        Zwykły USER nie powinien mieć do niej dostępu.
+                                    </p>
+                                </div>
+
+                                {adminTipsLoading && (
+                                    <p className="infoText">Ładowanie typów admina...</p>
+                                )}
+
+                                {adminTipsMessage && (
+                                    <p className="errorText">{adminTipsMessage}</p>
+                                )}
+
+                                {!adminTipsLoading && adminTips.length === 0 && (
+                                    <p className="infoText">Brak typów do wyświetlenia.</p>
+                                )}
+
+                                <div className="adminTipsGrid">
+                                    {adminTips.map((tip) => (
+                                        <article className="adminTipCard" key={tip.id}>
+                                            <div className="offerTop">
+                                                <p className="cardLabel">Typ #{tip.id}</p>
+                                                <span className="statusBadge">{tip.status}</span>
+                                            </div>
+
+                                            <div>
+                                                <p className="cardLabel">Mecz</p>
+                                                <h3>{tip.homeTeam} vs {tip.awayTeam}</h3>
+                                            </div>
+
+                                            <div className="tipDetailsGrid">
+                                                <div>
+                                                    <p className="cardLabel">Liga</p>
+                                                    <p className="tipValue">{tip.league}</p>
+                                                </div>
+
+                                                <div>
+                                                    <p className="cardLabel">Pick</p>
+                                                    <p className="tipValue">{tip.pick}</p>
+                                                </div>
+
+                                                <div>
+                                                    <p className="cardLabel">Kurs</p>
+                                                    <p className="tipValue">{tip.odds}</p>
+                                                </div>
+
+                                                <div>
+                                                    <p className="cardLabel">Premium</p>
+                                                    <p className="tipValue">{tip.premium ? 'Tak' : 'Nie'}</p>
+                                                </div>
+
+                                                <div>
+                                                    <p className="cardLabel">Cena</p>
+                                                    <p className="tipValue">{tip.price} PLN</p>
+                                                </div>
+
+                                                <div>
+                                                    <p className="cardLabel">Data meczu</p>
+                                                    <p className="tipValue">{formatDate(tip.matchDate)}</p>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    ))}
                                 </div>
                             </div>
                         </div>
