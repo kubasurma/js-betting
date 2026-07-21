@@ -9,6 +9,8 @@ import com.jsbetting.model.TipStatus;
 import java.util.List;
 import com.jsbetting.dto.TipOfferResponse;
 import java.math.BigDecimal;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 
 @Service
@@ -88,9 +90,10 @@ public class TipService {
     public List<TipOfferResponse> getPremiumOffers() {
         return tipRepository.findByPremiumAndStatusOrderByMatchDateAsc(true, TipStatus.PENDING)
                 .stream()
+                .filter(tip -> tip.getVisible() == null || tip.getVisible())
                 .map(tip -> new TipOfferResponse(
                         tip.getId(),
-                        getOddsRange(tip.getOdds()),
+                        buildOddsRange(tip.getOdds()),
                         tip.getPrice()
                 ))
                 .toList();
@@ -110,6 +113,19 @@ public class TipService {
         }
 
         return "2.60+";
+    }
+
+    private String buildOddsRange(BigDecimal odds) {
+        if (odds == null) {
+            return "Brak kursu";
+        }
+
+        BigDecimal minOdds = odds.subtract(new BigDecimal("0.10"));
+        BigDecimal maxOdds = odds.add(new BigDecimal("0.10"));
+
+        return minOdds.setScale(2, RoundingMode.HALF_UP)
+                + " - "
+                + maxOdds.setScale(2, RoundingMode.HALF_UP);
     }
 }
 

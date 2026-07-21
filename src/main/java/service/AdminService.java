@@ -85,4 +85,15 @@ public class AdminService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Brak uprawnień administratora");
         }
     }
+
+    public Tip updateTipVisibility(Long tipId, Boolean visible, String authorizationHeader) {
+        checkAdmin(authorizationHeader);
+
+        Tip tip = tipRepository.findById(tipId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Typ nie istnieje"));
+
+        tip.setVisible(visible);
+
+        return tipRepository.save(tip);
+    }
 }

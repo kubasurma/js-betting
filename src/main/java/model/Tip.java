@@ -52,6 +52,8 @@ public class Tip {
     public Tip() {
     }
 
+    private Boolean visible = true;
+
     public Tip(String league, String homeTeam, String awayTeam, String pick, BigDecimal odds, Integer stake, LocalDateTime matchDate, String analysis, TipStatus status, Boolean premium, BigDecimal price) {
         this.league = league;
         this.homeTeam = homeTeam;
@@ -156,5 +158,13 @@ public class Tip {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public Boolean getVisible() {
+        return visible;
+    }
+
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
     }
 }

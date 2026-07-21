@@ -472,6 +472,47 @@ function App() {
         }
     }
 
+    async function handleUpdateTipVisibility(tipId, visible) {
+        const token = localStorage.getItem('token')
+
+        if (!token || !isAdmin) {
+            setAdminTipsMessage('Tylko admin może zmieniać widoczność typów.')
+            return
+        }
+
+        try {
+            const response = await fetch(
+                `http://localhost:8080/admin/tips/${tipId}/visibility?visible=${visible}`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+
+            if (!response.ok) {
+                const message = await readErrorMessage(
+                    response,
+                    'Nie udało się zmienić widoczności typu.'
+                )
+
+                throw new Error(message)
+            }
+
+            setAdminTipsMessage(
+                visible
+                    ? `Typ #${tipId} jest ponownie widoczny.`
+                    : `Typ #${tipId} został ukryty.`
+            )
+
+            loadAdminTips()
+            loadOffers()
+        } catch (error) {
+            setAdminTipsMessage(error.message)
+        }
+    }
+
     async function handleDeleteTip(tipId) {
         setAdminTipsMessage(`Próbuję usunąć typ #${tipId}...`)
 
@@ -1117,6 +1158,12 @@ function App() {
                                                     <p className="tipValue">{formatDate(tip.matchDate)}</p>
                                                 </div>
                                             </div>
+                                            <p>
+                                                Widoczność:{' '}
+                                                <strong>
+                                                    {tip.visible === false ? 'Ukryty' : 'Widoczny'}
+                                                </strong>
+                                            </p>
                                             <div className="adminStatusActions">
                                                 <button
                                                     className="secondaryButton"
@@ -1151,6 +1198,15 @@ function App() {
                                                     onClick={() => handleDeleteTip(tip.id)}
                                                 >
                                                     Usuń
+                                                </button>
+                                                <button
+                                                    className="secondaryButton"
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleUpdateTipVisibility(tip.id, tip.visible === false)
+                                                    }
+                                                >
+                                                    {tip.visible === false ? 'Pokaż' : 'Ukryj'}
                                                 </button>
                                             </div>
 

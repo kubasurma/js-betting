@@ -60,4 +60,13 @@ public class AdminController {
     ) {
         return adminService.updateTipStatus(authorizationHeader, tipId, status);
     }
+
+    @PatchMapping("/tips/{tipId}/visibility")
+    public Tip updateTipVisibility(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @PathVariable Long tipId,
+            @RequestParam Boolean visible
+    ) {
+        return adminService.updateTipVisibility(tipId, visible, authorizationHeader);
+    }
 }
