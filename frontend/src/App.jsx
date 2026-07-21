@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
+const API_BASE_URL = 'http://localhost:8080'
+
 function App() {
     const [offers, setOffers] = useState([])
     const [loading, setLoading] = useState(true)
@@ -56,7 +58,7 @@ function App() {
         setLoading(true)
         setError('')
 
-        fetch('http://localhost:8080/offers/premium')
+        fetch(`${API_BASE_URL}/offers/premium`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Failed to load offers')
@@ -81,7 +83,7 @@ function App() {
             return
         }
 
-        fetch('http://localhost:8080/auth/me', {
+        fetch(`${API_BASE_URL}/auth/me`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -112,7 +114,7 @@ function App() {
         event.preventDefault()
         setAuthMessage('')
 
-        fetch('http://localhost:8080/auth/login', {
+        fetch(`${API_BASE_URL}/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -151,7 +153,7 @@ function App() {
         event.preventDefault()
         setAuthMessage('')
 
-        fetch('http://localhost:8080/auth/register', {
+        fetch(`${API_BASE_URL}/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -234,7 +236,7 @@ function App() {
         setMyTipsLoading(true)
         setMyTipsMessage('')
 
-        fetch('http://localhost:8080/users/me/my-tips/active', {
+        fetch(`${API_BASE_URL}/users/me/my-tips/active`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -268,7 +270,7 @@ function App() {
         setFreeTipLoading(true)
         setFreeTipMessage('')
 
-        fetch('http://localhost:8080/users/me/free-tip/status', {
+        fetch(`${API_BASE_URL}/users/me/free-tip/status`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -302,7 +304,7 @@ function App() {
         setFreeTipLoading(true)
         setFreeTipMessage('')
 
-        fetch('http://localhost:8080/users/me/free-tip/claim', {
+        fetch(`${API_BASE_URL}/users/me/free-tip/claim`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -340,7 +342,7 @@ function App() {
         setAdminTipsMessage('')
 
         try {
-            const response = await fetch('http://localhost:8080/admin/tips', {
+            const response = await fetch(`${API_BASE_URL}/admin/tips`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -401,7 +403,7 @@ function App() {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/admin/tips', {
+            const response = await fetch(`${API_BASE_URL}/admin/tips`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -448,7 +450,7 @@ function App() {
 
         try {
             const response = await fetch(
-                `http://localhost:8080/admin/tips/${tipId}/status?status=${status}`,
+                `${API_BASE_URL}/admin/tips/${tipId}/status?status=${status}`,
                 {
                     method: 'PATCH',
                     headers: {
@@ -484,7 +486,7 @@ function App() {
 
         try {
             const response = await fetch(
-                `http://localhost:8080/admin/tips/${tipId}/visibility?visible=${visible}`,
+                `${API_BASE_URL}/admin/tips/${tipId}/visibility?visible=${visible}`,
                 {
                     method: 'PATCH',
                     headers: {
@@ -527,7 +529,7 @@ function App() {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/admin/tips/${tipId}`, {
+            const response = await fetch(`${API_BASE_URL}/admin/tips/${tipId}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -565,7 +567,7 @@ function App() {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/purchases?tipId=${tipId}`, {
+            const response = await fetch(`${API_BASE_URL}/purchases?tipId=${tipId}`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`,
