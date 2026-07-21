@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
+import { API_BASE_URL, getAuthHeaders, readErrorMessage } from './api'
 import './App.css'
 
-const API_BASE_URL = 'http://localhost:8080'
 
 function App() {
     const [offers, setOffers] = useState([])
@@ -203,62 +203,6 @@ function App() {
             dateStyle: 'medium',
             timeStyle: 'short',
         })
-    }
-
-    function getAuthHeaders(token) {
-        return {
-            Authorization: `Bearer ${token}`,
-        }
-    }
-
-    async function readErrorMessage(response, fallbackMessage) {
-        const contentType = response.headers.get('content-type') || ''
-
-        if (contentType.includes('application/json')) {
-            try {
-                const body = await response.json()
-
-                return body.detail || body.message || fallbackMessage
-            } catch {
-                return fallbackMessage
-            }
-        }
-
-        const text = await response.text()
-
-        return text || fallbackMessage
-    }
-
-    function loadMyTips() {
-        const token = localStorage.getItem('token')
-
-        if (!token) {
-            setMyTips([])
-            return
-        }
-
-        setMyTipsLoading(true)
-        setMyTipsMessage('')
-
-        fetch(`${API_BASE_URL}/users/me/my-tips/active`, {
-            headers: getAuthHeaders(token),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to load my tips')
-                }
-
-                return response.json()
-            })
-            .then((data) => {
-                setMyTips(data)
-                setMyTipsLoading(false)
-            })
-            .catch(() => {
-                setMyTips([])
-                setMyTipsMessage('Nie udało się pobrać moich typów.')
-                setMyTipsLoading(false)
-            })
     }
 
     function loadFreeTipStatus() {
