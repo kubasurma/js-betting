@@ -692,3 +692,17 @@ h1 {
   border-color: #f87171;
   transform: translateY(-1px);
 }
+.deleteConfirmBox {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.deleteConfirmBox p {
+  width: 100%;
+  margin: 0;
+  color: #fecaca;
+  font-weight: 800;
+}

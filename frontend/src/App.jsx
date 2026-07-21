@@ -20,6 +20,8 @@ function App() {
     const [adminTips, setAdminTips] = useState([])
     const [adminTipsLoading, setAdminTipsLoading] = useState(false)
     const [adminTipsMessage, setAdminTipsMessage] = useState('')
+    const [tipIdToDelete, setTipIdToDelete] = useState(null)
+
 
     const [adminTipForm, setAdminTipForm] = useState({
         league: '',
@@ -520,6 +522,7 @@ function App() {
 
         if (!token || !isAdmin) {
             setAdminTipsMessage('Tylko admin może usuwać typy.')
+            setTipIdToDelete(null)
             return
         }
 
@@ -541,11 +544,13 @@ function App() {
             }
 
             setAdminTipsMessage(`Typ #${tipId} został usunięty.`)
+            setTipIdToDelete(null)
 
             loadAdminTips()
             loadOffers()
         } catch (error) {
             setAdminTipsMessage(error.message)
+            setTipIdToDelete(null)
         }
     }
 
@@ -1193,13 +1198,35 @@ function App() {
                                                     Lost
                                                 </button>
 
-                                                <button
-                                                    className="secondaryButton deleteButton"
-                                                    type="button"
-                                                    onClick={() => handleDeleteTip(tip.id)}
-                                                >
-                                                    Usuń
-                                                </button>
+                                                {tipIdToDelete === tip.id ? (
+                                                    <div className="deleteConfirmBox">
+                                                        <p>Czy na pewno usunąć typ #{tip.id}?</p>
+
+                                                        <button
+                                                            className="secondaryButton deleteButton"
+                                                            type="button"
+                                                            onClick={() => handleDeleteTip(tip.id)}
+                                                        >
+                                                            Potwierdź
+                                                        </button>
+
+                                                        <button
+                                                            className="secondaryButton"
+                                                            type="button"
+                                                            onClick={() => setTipIdToDelete(null)}
+                                                        >
+                                                            Anuluj
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        className="secondaryButton deleteButton"
+                                                        type="button"
+                                                        onClick={() => setTipIdToDelete(tip.id)}
+                                                    >
+                                                        Usuń
+                                                    </button>
+                                                )}
                                                 <button
                                                     className="secondaryButton"
                                                     type="button"
@@ -1217,10 +1244,10 @@ function App() {
                             </div>
                         </div>
                     </section>
-                )}
+                    <>)}
 
 
-
+            </>
 
                 <section className="section mutedSection" id="how-it-works">
                     <div className="container">
@@ -1231,9 +1258,9 @@ function App() {
 
                         <div className="stepsGrid">
                             <div className="stepCard">
-                                <span>03</span>
-                                <h3>Odbierasz typ</h3>
-                                <p>W sekcji „Moje typy” widzisz mecz, pick, kurs i status typu.</p>
+                                <span>01</span>
+                                <h3>Wybierasz ofertę</h3>
+                                <p>Przed zakupem widzisz tylko zakres kursu i cenę.</p>
                             </div>
 
                             <div className="stepCard">
