@@ -84,9 +84,7 @@ function App() {
         }
 
         fetch(`${API_BASE_URL}/auth/me`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            headers: getAuthHeaders(token),
         })
             .then((response) => {
                 if (!response.ok) {
@@ -207,6 +205,12 @@ function App() {
         })
     }
 
+    function getAuthHeaders(token) {
+        return {
+            Authorization: `Bearer ${token}`,
+        }
+    }
+
     async function readErrorMessage(response, fallbackMessage) {
         const contentType = response.headers.get('content-type') || ''
 
@@ -237,9 +241,7 @@ function App() {
         setMyTipsMessage('')
 
         fetch(`${API_BASE_URL}/users/me/my-tips/active`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            headers: getAuthHeaders(token),
         })
             .then((response) => {
                 if (!response.ok) {
@@ -271,9 +273,7 @@ function App() {
         setFreeTipMessage('')
 
         fetch(`${API_BASE_URL}/users/me/free-tip/status`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            headers: getAuthHeaders(token),
         })
             .then((response) => {
                 if (!response.ok) {
@@ -306,9 +306,7 @@ function App() {
 
         fetch(`${API_BASE_URL}/users/me/free-tip/claim`, {
             method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            headers: getAuthHeaders(token),
         })
             .then((response) => {
                 if (!response.ok) {
@@ -343,9 +341,7 @@ function App() {
 
         try {
             const response = await fetch(`${API_BASE_URL}/admin/tips`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: getAuthHeaders(token),
             })
 
             if (!response.ok) {
@@ -407,7 +403,7 @@ function App() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    ...getAuthHeaders(token),
                 },
                 body: JSON.stringify(payload),
             })
@@ -453,9 +449,7 @@ function App() {
                 `${API_BASE_URL}/admin/tips/${tipId}/status?status=${status}`,
                 {
                     method: 'PATCH',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: getAuthHeaders(token),
                 }
             )
 
@@ -489,9 +483,7 @@ function App() {
                 `${API_BASE_URL}/admin/tips/${tipId}/visibility?visible=${visible}`,
                 {
                     method: 'PATCH',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: getAuthHeaders(token),
                 }
             )
 
@@ -531,9 +523,7 @@ function App() {
         try {
             const response = await fetch(`${API_BASE_URL}/admin/tips/${tipId}`, {
                 method: 'DELETE',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: getAuthHeaders(token),
             })
 
             if (!response.ok) {
@@ -569,9 +559,7 @@ function App() {
         try {
             const response = await fetch(`${API_BASE_URL}/purchases?tipId=${tipId}`, {
                 method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: getAuthHeaders(token),
             })
 
             if (!response.ok) {
@@ -1246,10 +1234,7 @@ function App() {
                             </div>
                         </div>
                     </section>
-                    <>)}
-
-
-            </>
+                )}
 
                 <section className="section mutedSection" id="how-it-works">
                     <div className="container">
