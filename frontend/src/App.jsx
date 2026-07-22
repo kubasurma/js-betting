@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { API_BASE_URL, getAuthHeaders, getToken, readErrorMessage } from './api'
+import Header from './Header'
 import './App.css'
 
 function App() {
@@ -562,33 +563,11 @@ function App() {
 
     return (
         <div className="app">
-            <header className="siteHeader">
-                <div className="container nav">
-                    <a className="logo" href="/">
-                        JS<span>Betting</span>
-                    </a>
-
-                    <nav className="navLinks">
-                        <a href="#offers">Oferty</a>
-                        <a href="#free-tip">Free Tip</a>
-                        <a href="#my-tips">Moje typy</a>
-                        <a href="#account">Konto</a>
-                        {isAdmin && <a href="#admin">Admin</a>}
-                        <a href="#how-it-works">Jak to działa</a>
-                        <a href="#why-us">Dlaczego my</a>
-                    </nav>
-
-                    {currentUser ? (
-                        <button className="ghostButton" onClick={handleLogout}>
-                            Wyloguj
-                        </button>
-                    ) : (
-                        <a className="ghostButton" href="#account">
-                            Logowanie
-                        </a>
-                    )}
-                </div>
-            </header>
+            <Header
+                currentUser={currentUser}
+                isAdmin={isAdmin}
+                onLogout={handleLogout}
+            />
 
             <main>
                 <section className="hero">
