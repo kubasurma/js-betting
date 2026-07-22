@@ -7,6 +7,7 @@ import HotItWorks from './HotItWorks.jsx'
 import WhyUs from './WhyUs'
 import OffersSection from './OffersSection'
 import FreeTipSection from './FreeTipSection.jsx'
+import MyTipsSection from './MyTipsSection.jsx'
 import './App.css'
 
 function App() {
@@ -596,84 +597,14 @@ function App() {
                 />
 
 
-                <section className="section mutedSection" id="my-tips">
-                    <div className="container">
-                        <div className="sectionHeader">
-                            <p className="eyebrow">Strefa użytkownika</p>
-                            <h2>Moje typy</h2>
-                            <p>
-                                Tutaj zobaczysz typy kupione na swoim koncie razem z meczem, pickiem,
-                                kursem i statusem.
-                            </p>
-                        </div>
-
-                        {!currentUser && (
-                            <p className="infoText">Zaloguj się, żeby zobaczyć swoje typy.</p>
-                        )}
-
-                        {currentUser && (
-                            <>
-                                <button className="secondaryButton refreshButton" onClick={loadMyTips}>
-                                    Odśwież moje typy
-                                </button>
-
-                                {myTipsLoading && <p className="infoText">Ładowanie moich typów...</p>}
-
-                                {myTipsMessage && <p className="errorText">{myTipsMessage}</p>}
-
-                                {!myTipsLoading && myTips.length === 0 && (
-                                    <p className="infoText">Nie masz jeszcze aktywnych typów.</p>
-                                )}
-
-                                <div className="myTipsGrid">
-                                    {myTips.map((tip) => (
-                                        <article className="myTipCard" key={tip.purchaseId}>
-                                            <div className="offerTop">
-                                                <p className="cardLabel">Zakup #{tip.purchaseId}</p>
-                                                <span className="statusBadge">{tip.status}</span>
-                                            </div>
-
-                                            <div>
-                                                <p className="cardLabel">Liga</p>
-                                                <h3>{tip.league}</h3>
-                                            </div>
-
-                                            <div>
-                                                <p className="cardLabel">Mecz</p>
-                                                <p className="matchName">
-                                                    {tip.homeTeam} vs {tip.awayTeam}
-                                                </p>
-                                            </div>
-
-                                            <div className="tipDetailsGrid">
-                                                <div>
-                                                    <p className="cardLabel">Pick</p>
-                                                    <p className="tipValue">{tip.pick}</p>
-                                                </div>
-
-                                                <div>
-                                                    <p className="cardLabel">Kurs</p>
-                                                    <p className="tipValue">{tip.odds}</p>
-                                                </div>
-
-
-                                                <div>
-                                                    <p className="cardLabel">Cena</p>
-                                                    <p className="tipValue">{tip.pricePaid} PLN</p>
-                                                </div>
-                                            </div>
-
-                                            <div>
-                                                <p className="cardLabel">Data meczu</p>
-                                                <p className="tipValue">{formatDate(tip.matchDate)}</p>
-                                            </div>
-                                        </article>
-                                    ))}
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </section>
+                <MyTipsSection
+                    currentUser={currentUser}
+                    myTips={myTips}
+                    myTipsLoading={myTipsLoading}
+                    myTipsMessage={myTipsMessage}
+                    onRefresh={loadMyTips}
+                    formatDate={formatDate}
+                />
 
                 <section className="section mutedSection" id="account">
                     <div className="container">
