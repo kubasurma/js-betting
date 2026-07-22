@@ -3,15 +3,13 @@ import { API_BASE_URL, getAuthHeaders, getToken, readErrorMessage } from './api'
 import Header from './Header'
 import Hero from './Hero'
 import Footer from './Footer'
-import HotItWorks from './HotItWorks.jsx'
+import HowItWorks from './HowItWorks'
 import WhyUs from './WhyUs'
 import OffersSection from './OffersSection'
-import FreeTipSection from './FreeTipSection.jsx'
-import MyTipsSection from './MyTipsSection.jsx'
-import AccountSection from './AccountSection.jsx'
-import AdminTipForm from './AdminTipForm.jsx'
-import AdminTipCard from './AdminTipCard.jsx'
-import AdminPanel from './AdminPanel.jsx'
+import FreeTipSection from './FreeTipSection'
+import MyTipsSection from './MyTipsSection'
+import AccountSection from './AccountSection'
+import AdminPanel from './AdminPanel'
 import './App.css'
 
 function App() {
@@ -641,7 +639,7 @@ function App() {
                     formatDate={formatDate}
                 />
 
-                <HotItWorks />
+                <HowItWorks />
 
                 <WhyUs />
             </main>
