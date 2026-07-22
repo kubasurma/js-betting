@@ -9,6 +9,7 @@ import OffersSection from './OffersSection'
 import FreeTipSection from './FreeTipSection.jsx'
 import MyTipsSection from './MyTipsSection.jsx'
 import AccountSection from './AccountSection.jsx'
+import AdminTipForm from './AdminTipForm.jsx'
 import './App.css'
 
 function App() {
@@ -653,92 +654,12 @@ function App() {
                                     </p>
                                 </div>
 
-                                <form className="adminForm" onSubmit={handleCreatePremiumTip}>
-                                    <label>
-                                        Liga
-                                        <input
-                                            name="league"
-                                            type="text"
-                                            value={adminTipForm.league}
-                                            onChange={handleAdminTipFormChange}
-                                            required
-                                        />
-                                    </label>
-
-                                    <label>
-                                        Gospodarz
-                                        <input
-                                            name="homeTeam"
-                                            type="text"
-                                            value={adminTipForm.homeTeam}
-                                            onChange={handleAdminTipFormChange}
-                                            required
-                                        />
-                                    </label>
-
-                                    <label>
-                                        Gość
-                                        <input
-                                            name="awayTeam"
-                                            type="text"
-                                            value={adminTipForm.awayTeam}
-                                            onChange={handleAdminTipFormChange}
-                                            required
-                                        />
-                                    </label>
-
-                                    <label>
-                                        Pick
-                                        <input
-                                            name="pick"
-                                            type="text"
-                                            value={adminTipForm.pick}
-                                            onChange={handleAdminTipFormChange}
-                                            required
-                                        />
-                                    </label>
-
-                                    <label>
-                                        Kurs
-                                        <input
-                                            name="odds"
-                                            type="number"
-                                            step="0.01"
-                                            min="1"
-                                            value={adminTipForm.odds}
-                                            onChange={handleAdminTipFormChange}
-                                            required
-                                        />
-                                    </label>
-
-                                    <label>
-                                        Cena PLN
-                                        <input
-                                            name="price"
-                                            type="number"
-                                            step="0.01"
-                                            min="0"
-                                            value={adminTipForm.price}
-                                            onChange={handleAdminTipFormChange}
-                                            required
-                                        />
-                                    </label>
-
-                                    <label className="wideField">
-                                        Data meczu
-                                        <input
-                                            name="matchDate"
-                                            type="datetime-local"
-                                            value={adminTipForm.matchDate}
-                                            onChange={handleAdminTipFormChange}
-                                            required
-                                        />
-                                    </label>
-
-                                    <button className="primaryButton fullWidth wideField" type="submit">
-                                        Dodaj typ premium
-                                    </button>
-                                </form>
+                                <AdminTipForm
+                                    adminTipForm={adminTipForm}
+                                    adminCreateMessage={adminCreateMessage}
+                                    onChange={handleAdminTipFormChange}
+                                    onSubmit={handleCreatePremiumTip}
+                                />
 
                                 {adminCreateMessage && (
                                     <p className="infoText">{adminCreateMessage}</p>

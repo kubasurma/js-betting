@@ -61,4 +61,3 @@ function FreeTipSection({
 }
 
 export default FreeTipSection
-export default FreeTipSection
