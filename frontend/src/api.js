@@ -1,5 +1,9 @@
 export const API_BASE_URL = 'http://localhost:8080'
 
+export function getToken() {
+    return localStorage.getItem('token')
+}
+
 export function getAuthHeaders(token) {
     return {
         Authorization: `Bearer ${token}`,

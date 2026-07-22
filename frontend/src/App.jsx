@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
-import { API_BASE_URL, getAuthHeaders, readErrorMessage } from './api'
+import { API_BASE_URL, getAuthHeaders, getToken, readErrorMessage } from './api'
 import './App.css'
-
 
 function App() {
     const [offers, setOffers] = useState([])
@@ -77,7 +76,7 @@ function App() {
     }
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
+        const token = getToken()
 
         if (!token) {
             return
@@ -205,8 +204,40 @@ function App() {
         })
     }
 
+    function loadMyTips() {
+        const token = getToken()
+
+        if (!token) {
+            setMyTips([])
+            return
+        }
+
+        setMyTipsLoading(true)
+        setMyTipsMessage('')
+
+        fetch(`${API_BASE_URL}/users/me/my-tips/active`, {
+            headers: getAuthHeaders(token),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to load my tips')
+                }
+
+                return response.json()
+            })
+            .then((data) => {
+                setMyTips(data)
+                setMyTipsLoading(false)
+            })
+            .catch(() => {
+                setMyTips([])
+                setMyTipsMessage('Nie udało się pobrać moich typów.')
+                setMyTipsLoading(false)
+            })
+    }
+
     function loadFreeTipStatus() {
-        const token = localStorage.getItem('token')
+        const token = getToken()
 
         if (!token) {
             setFreeTipStatus(null)
@@ -237,8 +268,11 @@ function App() {
             })
     }
 
+
+
+
     function claimFreeTip() {
-        const token = localStorage.getItem('token')
+        const token = getToken()
 
         if (!token || !currentUser) {
             setFreeTipMessage('Zaloguj się, żeby odebrać darmowy typ.')
@@ -273,7 +307,7 @@ function App() {
     }
 
     async function loadAdminTips() {
-        const token = localStorage.getItem('token')
+        const token = getToken()
 
         if (!token) {
             setAdminTips([])
@@ -321,7 +355,7 @@ function App() {
         event.preventDefault()
         setAdminCreateMessage('')
 
-        const token = localStorage.getItem('token')
+        const token = getToken()
 
         if (!token || !isAdmin) {
             setAdminCreateMessage('Tylko admin może dodać typ.')
@@ -381,7 +415,7 @@ function App() {
     }
 
     async function handleUpdateTipStatus(tipId, status) {
-        const token = localStorage.getItem('token')
+        const token = getToken()
 
         if (!token || !isAdmin) {
             setAdminTipsMessage('Tylko admin może zmieniać status typu.')
@@ -415,7 +449,7 @@ function App() {
     }
 
     async function handleUpdateTipVisibility(tipId, visible) {
-        const token = localStorage.getItem('token')
+        const token = getToken()
 
         if (!token || !isAdmin) {
             setAdminTipsMessage('Tylko admin może zmieniać widoczność typów.')
@@ -456,7 +490,7 @@ function App() {
     async function handleDeleteTip(tipId) {
         setAdminTipsMessage(`Próbuję usunąć typ #${tipId}...`)
 
-        const token = localStorage.getItem('token')
+        const token = getToken()
 
         if (!token || !isAdmin) {
             setAdminTipsMessage('Tylko admin może usuwać typy.')
@@ -493,7 +527,7 @@ function App() {
     async function handlePurchase(tipId) {
         setPurchaseMessage('')
 
-        const token = localStorage.getItem('token')
+        const token = getToken()
 
         if (!token || !currentUser) {
             setPurchaseMessage('Zaloguj się, żeby kupić typ.')
