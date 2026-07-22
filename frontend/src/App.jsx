@@ -11,6 +11,7 @@ import MyTipsSection from './MyTipsSection.jsx'
 import AccountSection from './AccountSection.jsx'
 import AdminTipForm from './AdminTipForm.jsx'
 import AdminTipCard from './AdminTipCard.jsx'
+import AdminPanel from './AdminPanel.jsx'
 import './App.css'
 
 function App() {
@@ -621,93 +622,24 @@ function App() {
                     onLogout={handleLogout}
                 />
 
-                {isAdmin && (
-                    <section className="section" id="admin">
-                        <div className="container">
-                            <div className="adminBox">
-                                <div>
-                                    <p className="eyebrow">Admin</p>
-                                    <h2>Panel administratora</h2>
-                                    <p>
-                                        Ta sekcja jest widoczna tylko dla użytkownika z rolą ADMIN.
-                                        Tutaj będziemy zarządzać typami.
-                                    </p>
-                                </div>
-
-                                <div className="adminStatusCard">
-                                    <p className="cardLabel">Zalogowany admin</p>
-                                    <h3>{currentUser.email}</h3>
-                                    <p>Rola: {currentUser.role}</p>
-
-                                    <button className="secondaryButton" onClick={loadAdminTips}>
-                                        Odśwież typy
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="adminCreatePanel">
-                                <div className="sectionHeader">
-                                    <p className="eyebrow">Create tip</p>
-                                    <h2>Dodaj typ premium</h2>
-                                    <p>
-                                        Ten formularz tworzy pełny typ w backendzie. Publicznie użytkownik
-                                        nadal zobaczy tylko zakres kursu i cenę.
-                                    </p>
-                                </div>
-
-                                <AdminTipForm
-                                    adminTipForm={adminTipForm}
-                                    adminCreateMessage={adminCreateMessage}
-                                    onChange={handleAdminTipFormChange}
-                                    onSubmit={handleCreatePremiumTip}
-                                />
-
-                                {adminCreateMessage && (
-                                    <p className="infoText">{adminCreateMessage}</p>
-                                )}
-                            </div>
-
-                            <div className="adminTipsPanel">
-                                <div className="sectionHeader">
-                                    <p className="eyebrow">Admin data</p>
-                                    <h2>Wszystkie typy</h2>
-                                    <p>
-                                        Lista pochodzi z zabezpieczonego endpointu admina.
-                                        Zwykły USER nie powinien mieć do niej dostępu.
-                                    </p>
-                                </div>
-
-                                {adminTipsLoading && (
-                                    <p className="infoText">Ładowanie typów admina...</p>
-                                )}
-
-                                {adminTipsMessage && (
-                                    <p className="errorText">{adminTipsMessage}</p>
-                                )}
-
-                                {!adminTipsLoading && adminTips.length === 0 && (
-                                    <p className="infoText">Brak typów do wyświetlenia.</p>
-                                )}
-
-                                <div className="adminTipsGrid">
-                                    {adminTips.map((tip) => (
-                                        <AdminTipCard
-                                            key={tip.id}
-                                            tip={tip}
-                                            tipIdToDelete={tipIdToDelete}
-                                            onUpdateStatus={handleUpdateTipStatus}
-                                            onUpdateVisibility={handleUpdateTipVisibility}
-                                            onAskDelete={setTipIdToDelete}
-                                            onCancelDelete={() => setTipIdToDelete(null)}
-                                            onDelete={handleDeleteTip}
-                                            formatDate={formatDate}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                )}
+                <AdminPanel
+                    isAdmin={isAdmin}
+                    adminTips={adminTips}
+                    adminTipsLoading={adminTipsLoading}
+                    adminTipsMessage={adminTipsMessage}
+                    adminCreateMessage={adminCreateMessage}
+                    adminTipForm={adminTipForm}
+                    tipIdToDelete={tipIdToDelete}
+                    onFormChange={handleAdminTipFormChange}
+                    onCreateTip={handleCreatePremiumTip}
+                    onRefreshTips={loadAdminTips}
+                    onUpdateStatus={handleUpdateTipStatus}
+                    onUpdateVisibility={handleUpdateTipVisibility}
+                    onAskDelete={setTipIdToDelete}
+                    onCancelDelete={() => setTipIdToDelete(null)}
+                    onDelete={handleDeleteTip}
+                    formatDate={formatDate}
+                />
 
                 <HotItWorks />
 
