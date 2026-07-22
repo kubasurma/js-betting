@@ -6,6 +6,7 @@ import Footer from './Footer'
 import HotItWorks from './HotItWorks.jsx'
 import WhyUs from './WhyUs'
 import OffersSection from './OffersSection'
+import FreeTipSection from './FreeTipSection.jsx'
 import './App.css'
 
 function App() {
@@ -585,62 +586,14 @@ function App() {
                     onPurchase={handlePurchase}
                 />
 
-                <section className="section" id="free-tip">
-                    <div className="container">
-                        <div className="freeTipBox">
-                            <div>
-                                <p className="eyebrow">Free Tip</p>
-                                <h2>Darmowy typ co 5 dni</h2>
-                                <p>
-                                    Zalogowany użytkownik może odebrać jeden darmowy typ raz na 5 dni.
-                                    Darmowy typ trafia potem do sekcji „Moje typy”.
-                                </p>
-                            </div>
-
-                            <div className="freeTipPanel">
-                                {!currentUser && (
-                                    <p className="infoText">Zaloguj się, żeby odebrać darmowy typ.</p>
-                                )}
-
-                                {currentUser && freeTipLoading && (
-                                    <p className="infoText">Sprawdzanie statusu...</p>
-                                )}
-
-                                {currentUser && freeTipStatus && (
-                                    <>
-                                        <div className="panelCard">
-                                            <span>Status</span>
-                                            <strong>
-                                                {freeTipStatus.canClaim ? 'Dostępny' : 'Niedostępny'}
-                                            </strong>
-                                        </div>
-
-                                        {!freeTipStatus.canClaim && (
-                                            <div className="panelCard">
-                                                <span>Następny darmowy typ</span>
-                                                <strong>{formatDate(freeTipStatus.nextAvailableAt)}</strong>
-                                            </div>
-                                        )}
-
-                                        {freeTipStatus.message && (
-                                            <p className="infoText">{freeTipStatus.message}</p>
-                                        )}
-
-                                        <button
-                                            className="primaryButton fullWidth"
-                                            onClick={claimFreeTip}
-                                            disabled={!freeTipStatus.canClaim || freeTipLoading}
-                                        >
-                                            Odbierz darmowy typ
-                                        </button>
-                                    </>
-                                )}
-
-                                {freeTipMessage && <p className="infoText">{freeTipMessage}</p>}
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <FreeTipSection
+                    currentUser={currentUser}
+                    freeTipStatus={freeTipStatus}
+                    freeTipLoading={freeTipLoading}
+                    freeTipMessage={freeTipMessage}
+                    onClaim={claimFreeTip}
+                    formatDate={formatDate}
+                />
 
 
                 <section className="section mutedSection" id="my-tips">
