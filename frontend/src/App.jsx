@@ -10,6 +10,7 @@ import FreeTipSection from './FreeTipSection.jsx'
 import MyTipsSection from './MyTipsSection.jsx'
 import AccountSection from './AccountSection.jsx'
 import AdminTipForm from './AdminTipForm.jsx'
+import AdminTipCard from './AdminTipCard.jsx'
 import './App.css'
 
 function App() {
@@ -690,123 +691,17 @@ function App() {
 
                                 <div className="adminTipsGrid">
                                     {adminTips.map((tip) => (
-                                        <article className="adminTipCard" key={tip.id}>
-                                            <div className="offerTop">
-                                                <p className="cardLabel">Typ #{tip.id}</p>
-                                                <span className="statusBadge">{tip.status}</span>
-                                            </div>
-
-                                            <div>
-                                                <p className="cardLabel">Mecz</p>
-                                                <h3>{tip.homeTeam} vs {tip.awayTeam}</h3>
-                                            </div>
-
-                                            <div className="tipDetailsGrid">
-                                                <div>
-                                                    <p className="cardLabel">Liga</p>
-                                                    <p className="tipValue">{tip.league}</p>
-                                                </div>
-
-                                                <div>
-                                                    <p className="cardLabel">Pick</p>
-                                                    <p className="tipValue">{tip.pick}</p>
-                                                </div>
-
-                                                <div>
-                                                    <p className="cardLabel">Kurs</p>
-                                                    <p className="tipValue">{tip.odds}</p>
-                                                </div>
-
-                                                <div>
-                                                    <p className="cardLabel">Premium</p>
-                                                    <p className="tipValue">{tip.premium ? 'Tak' : 'Nie'}</p>
-                                                </div>
-
-                                                <div>
-                                                    <p className="cardLabel">Cena</p>
-                                                    <p className="tipValue">{tip.price} PLN</p>
-                                                </div>
-
-                                                <div>
-                                                    <p className="cardLabel">Data meczu</p>
-                                                    <p className="tipValue">{formatDate(tip.matchDate)}</p>
-                                                </div>
-                                            </div>
-                                            <p>
-                                                Widoczność:{' '}
-                                                <strong>
-                                                    {tip.visible === false ? 'Ukryty' : 'Widoczny'}
-                                                </strong>
-                                            </p>
-                                            <div className="adminStatusActions">
-                                                <button
-                                                    className="secondaryButton"
-                                                    type="button"
-                                                    onClick={() => handleUpdateTipStatus(tip.id, 'PENDING')}
-                                                    disabled={tip.status === 'PENDING'}
-                                                >
-                                                    Pending
-                                                </button>
-
-                                                <button
-                                                    className="secondaryButton"
-                                                    type="button"
-                                                    onClick={() => handleUpdateTipStatus(tip.id, 'WON')}
-                                                    disabled={tip.status === 'WON'}
-                                                >
-                                                    Won
-                                                </button>
-
-                                                <button
-                                                    className="secondaryButton"
-                                                    type="button"
-                                                    onClick={() => handleUpdateTipStatus(tip.id, 'LOST')}
-                                                    disabled={tip.status === 'LOST'}
-                                                >
-                                                    Lost
-                                                </button>
-
-                                                {tipIdToDelete === tip.id ? (
-                                                    <div className="deleteConfirmBox">
-                                                        <p>Czy na pewno usunąć typ #{tip.id}?</p>
-
-                                                        <button
-                                                            className="secondaryButton deleteButton"
-                                                            type="button"
-                                                            onClick={() => handleDeleteTip(tip.id)}
-                                                        >
-                                                            Potwierdź
-                                                        </button>
-
-                                                        <button
-                                                            className="secondaryButton"
-                                                            type="button"
-                                                            onClick={() => setTipIdToDelete(null)}
-                                                        >
-                                                            Anuluj
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <button
-                                                        className="secondaryButton deleteButton"
-                                                        type="button"
-                                                        onClick={() => setTipIdToDelete(tip.id)}
-                                                    >
-                                                        Usuń
-                                                    </button>
-                                                )}
-                                                <button
-                                                    className="secondaryButton"
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleUpdateTipVisibility(tip.id, tip.visible === false)
-                                                    }
-                                                >
-                                                    {tip.visible === false ? 'Pokaż' : 'Ukryj'}
-                                                </button>
-                                            </div>
-
-                                        </article>
+                                        <AdminTipCard
+                                            key={tip.id}
+                                            tip={tip}
+                                            tipIdToDelete={tipIdToDelete}
+                                            onUpdateStatus={handleUpdateTipStatus}
+                                            onUpdateVisibility={handleUpdateTipVisibility}
+                                            onAskDelete={setTipIdToDelete}
+                                            onCancelDelete={() => setTipIdToDelete(null)}
+                                            onDelete={handleDeleteTip}
+                                            formatDate={formatDate}
+                                        />
                                     ))}
                                 </div>
                             </div>
