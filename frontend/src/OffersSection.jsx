@@ -5,6 +5,13 @@ function OffersSection({
                            purchaseMessage,
                            onPurchase,
                        }) {
+    function getOfferName(offer) {
+        if (Number(offer.price) <= 7.99) {
+            return 'Oferta zwykła'
+        }
+
+        return 'Oferta premium'
+    }
     return (
         <section className="section" id="offers">
             <div className="container">
@@ -29,8 +36,8 @@ function OffersSection({
                     {!loading && !error && offers.map((offer) => (
                         <article className="offerCard" key={offer.id}>
                             <div className="offerTop">
-                                <p className="cardLabel">Oferta #{offer.id}</p>
-                                <span className="statusBadge">Premium</span>
+                                <p className="cardLabel">{getOfferName(offer)}</p>
+                                <span className="statusBadge">Dostępny</span>
                             </div>
 
                             <div>
