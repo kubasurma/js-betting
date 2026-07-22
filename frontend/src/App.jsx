@@ -4,8 +4,9 @@ import Header from './Header'
 import Hero from './Hero'
 import Footer from './Footer'
 import HotItWorks from './HotItWorks.jsx'
-import './App.css'
 import WhyUs from './WhyUs'
+import OffersSection from './OffersSection'
+import './App.css'
 
 function App() {
     const [offers, setOffers] = useState([])
@@ -276,7 +277,7 @@ function App() {
 
 
 
-    function claimFreeTip() {
+    async function claimFreeTip() {
         const token = getToken()
 
         if (!token || !currentUser) {
@@ -287,28 +288,30 @@ function App() {
         setFreeTipLoading(true)
         setFreeTipMessage('')
 
-        fetch(`${API_BASE_URL}/users/me/free-tip/claim`, {
-            method: 'POST',
-            headers: getAuthHeaders(token),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to claim free tip')
-                }
+        try {
+            const response = await fetch(`${API_BASE_URL}/users/me/free-tip/claim`, {
+                method: 'POST',
+                headers: getAuthHeaders(token),
+            })
 
-                return response.json()
-            })
-            .then(() => {
-                setFreeTipMessage('Darmowy typ odebrany.')
-                setFreeTipLoading(false)
-                loadFreeTipStatus()
-                loadMyTips()
-            })
-            .catch(() => {
-                setFreeTipMessage('Nie udało się odebrać darmowego typu.')
-                setFreeTipLoading(false)
-                loadFreeTipStatus()
-            })
+            if (!response.ok) {
+                const message = await readErrorMessage(
+                    response,
+                    'Nie udało się odebrać darmowego typu.'
+                )
+
+                throw new Error(message)
+            }
+
+            setFreeTipMessage('Darmowy typ odebrany.')
+            loadFreeTipStatus()
+            loadMyTips()
+        } catch (error) {
+            setFreeTipMessage(error.message)
+            loadFreeTipStatus()
+        } finally {
+            setFreeTipLoading(false)
+        }
     }
 
     async function loadAdminTips() {
@@ -574,57 +577,13 @@ function App() {
             <main>
                 <Hero currentUser={currentUser} />
 
-                <section className="section" id="offers">
-                    <div className="container">
-                        <div className="sectionHeader">
-                            <p className="eyebrow">Dostępne teraz</p>
-                            <h2>Oferty premium</h2>
-                            <p>
-                                Przed zakupem nie pokazujemy meczu, picka ani dokładnego kursu.
-                                Dzięki temu treść premium pozostaje zabezpieczona.
-                            </p>
-                        </div>
-
-                        {loading && <p className="infoText">Ładowanie ofert...</p>}
-
-                        {error && <p className="errorText">{error}</p>}
-
-                        {!loading && !error && offers.length === 0 && (
-                            <p className="infoText">Brak dostępnych ofert premium.</p>
-                        )}
-
-                        <div className="offersGrid">
-                            {!loading && !error && offers.map((offer) => (
-                                <article className="offerCard" key={offer.id}>
-                                    <div className="offerTop">
-                                        <p className="cardLabel">Oferta #{offer.id}</p>
-                                        <span className="statusBadge">Premium</span>
-                                    </div>
-
-                                    <div>
-                                        <p className="cardLabel">Zakres kursu</p>
-                                        <h3>{offer.oddsRange}</h3>
-                                    </div>
-
-                                    <div>
-                                        <p className="cardLabel">Cena</p>
-                                        <p className="price">{offer.price} PLN</p>
-                                    </div>
-
-                                    <button
-  className="primaryButton fullWidth"
-  onClick={() => handlePurchase(offer.id)}
->
-  Kup typ
-</button>
-                                </article>
-                            ))}
-                        </div>
-                    </div>
-
-                    {purchaseMessage && <p className="infoText">{purchaseMessage}</p>}
-                    
-                </section>
+                <OffersSection
+                    offers={offers}
+                    loading={loading}
+                    error={error}
+                    purchaseMessage={purchaseMessage}
+                    onPurchase={handlePurchase}
+                />
 
                 <section className="section" id="free-tip">
                     <div className="container">
