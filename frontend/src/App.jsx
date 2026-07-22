@@ -8,6 +8,7 @@ import WhyUs from './WhyUs'
 import OffersSection from './OffersSection'
 import FreeTipSection from './FreeTipSection.jsx'
 import MyTipsSection from './MyTipsSection.jsx'
+import AccountSection from './AccountSection.jsx'
 import './App.css'
 
 function App() {
@@ -606,126 +607,17 @@ function App() {
                     formatDate={formatDate}
                 />
 
-                <section className="section mutedSection" id="account">
-                    <div className="container">
-                        <div className="sectionHeader">
-                            <p className="eyebrow">Konto</p>
-                            <h2>Logowanie i rejestracja</h2>
-                            <p>
-                                Zaloguj się, żeby kupować typy i później widzieć je w sekcji „Moje typy”.
-                            </p>
-                        </div>
-
-                        {currentUser && (
-                            <div className="accountBox">
-                                <h3>Jesteś zalogowany</h3>
-                                <p>Email: {currentUser.email}</p>
-                                <p>Imię: {currentUser.firstName}</p>
-                                <p>Rola: {currentUser.role}</p>
-                                <button className="secondaryButton" onClick={handleLogout}>
-                                    Wyloguj
-                                </button>
-                            </div>
-                        )}
-
-                        {!currentUser && (
-                            <div className="authGrid">
-                                <form className="authCard" onSubmit={handleLogin}>
-                                    <h3>Logowanie</h3>
-
-                                    <label>
-                                        Email
-                                        <input
-                                            type="email"
-                                            value={loginForm.email}
-                                            onChange={(event) =>
-                                                setLoginForm({
-                                                    ...loginForm,
-                                                    email: event.target.value,
-                                                })
-                                            }
-                                            required
-                                        />
-                                    </label>
-
-                                    <label>
-                                        Hasło
-                                        <input
-                                            type="password"
-                                            value={loginForm.password}
-                                            onChange={(event) =>
-                                                setLoginForm({
-                                                    ...loginForm,
-                                                    password: event.target.value,
-                                                })
-                                            }
-                                            required
-                                        />
-                                    </label>
-
-                                    <button className="primaryButton fullWidth" type="submit">
-                                        Zaloguj
-                                    </button>
-                                </form>
-
-                                <form className="authCard" onSubmit={handleRegister}>
-                                    <h3>Rejestracja</h3>
-
-                                    <label>
-                                        Imię
-                                        <input
-                                            type="text"
-                                            value={registerForm.firstName}
-                                            onChange={(event) =>
-                                                setRegisterForm({
-                                                    ...registerForm,
-                                                    firstName: event.target.value,
-                                                })
-                                            }
-                                            required
-                                        />
-                                    </label>
-
-                                    <label>
-                                        Email
-                                        <input
-                                            type="email"
-                                            value={registerForm.email}
-                                            onChange={(event) =>
-                                                setRegisterForm({
-                                                    ...registerForm,
-                                                    email: event.target.value,
-                                                })
-                                            }
-                                            required
-                                        />
-                                    </label>
-
-                                    <label>
-                                        Hasło
-                                        <input
-                                            type="password"
-                                            value={registerForm.password}
-                                            onChange={(event) =>
-                                                setRegisterForm({
-                                                    ...registerForm,
-                                                    password: event.target.value,
-                                                })
-                                            }
-                                            required
-                                        />
-                                    </label>
-
-                                    <button className="primaryButton fullWidth" type="submit">
-                                        Zarejestruj
-                                    </button>
-                                </form>
-                            </div>
-                        )}
-
-                        {authMessage && <p className="infoText">{authMessage}</p>}
-                    </div>
-                </section>
+                <AccountSection
+                    currentUser={currentUser}
+                    authMessage={authMessage}
+                    loginForm={loginForm}
+                    setLoginForm={setLoginForm}
+                    registerForm={registerForm}
+                    setRegisterForm={setRegisterForm}
+                    onLogin={handleLogin}
+                    onRegister={handleRegister}
+                    onLogout={handleLogout}
+                />
 
                 {isAdmin && (
                     <section className="section" id="admin">
