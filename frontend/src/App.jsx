@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { API_BASE_URL, getAuthHeaders, getToken, readErrorMessage } from './api'
 import Header from './Header'
 import Hero from './Hero'
+import Footer from './Footer'
 import './App.css'
 
 function App() {
@@ -1203,12 +1204,7 @@ function App() {
                 </section>
             </main>
 
-            <footer className="footer">
-                <div className="container footerContent">
-                    <p>© 2026 JS Betting</p>
-                    <p>Premium betting tips platform</p>
-                </div>
-            </footer>
+            <Footer />
         </div>
     )
 }
